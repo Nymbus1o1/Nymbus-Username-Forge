@@ -188,7 +188,7 @@ Contributions, bug reports, and word-list suggestions are welcome.
 A few ideas if you're looking for a starting point: more platform presets, more vibe presets, additional word categories, or an export option beyond TXT/CSV/JSON. These are suggestions, not a committed roadmap.
 
 ## License
-Choose and add a license file if you haven't already — [MIT](https://choosealicense.com/licenses/mit/) is a common, permissive choice for a small standalone tool like this. Until a license is added, all rights are reserved by default, which means others can't legally reuse or modify the code even though the repo is public.
+No license as of now.
 
 ---
 
