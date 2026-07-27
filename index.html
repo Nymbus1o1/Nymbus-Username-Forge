@@ -518,12 +518,49 @@ input{font-family:inherit;}
 /* ---------- PIN / NOTES ---------- */
 .icon-btn.is-pinned{color:#22D3EE;border-color:rgba(34,211,238,0.4);background:rgba(34,211,238,0.12);}
 .fav-note-input{
-  order:10;flex:0 0 100%;width:100%;background:transparent;border:none;border-top:1px dashed var(--border-glass);
-  color:var(--text-secondary);font-size:11.5px;font-style:italic;padding:8px 0 0;margin-top:8px;outline:none;
+  background:transparent;border:none;color:var(--text-secondary);font-size:11.5px;font-style:italic;outline:none;
 }
 .fav-note-input::placeholder{color:var(--text-muted);}
 .fav-note-input:focus{color:var(--text-primary);}
+.fav-extra-row{
+  order:10;flex:0 0 100%;width:100%;display:flex;gap:8px;align-items:center;
+  margin-top:8px;padding-top:8px;border-top:1px dashed var(--border-glass);
+}
+.fav-extra-row .fav-collection-select{flex:0 0 auto;max-width:150px;}
+.fav-extra-row .fav-note-input{flex:1;min-width:0;}
+.fav-tags-input{order:11;flex:0 0 100%;width:100%;margin-top:6px;padding-top:8px;border-top:1px dashed var(--border-glass);}
 .list-item{flex-wrap:wrap;}
+
+/* ---------- COLLECTIONS / PROFILES (pill with inline delete) ---------- */
+.fav-collections-manage{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:10px;}
+.deletable-pill{position:relative;padding-right:26px;}
+.pill-del{
+  position:absolute;right:6px;top:50%;transform:translateY(-50%);
+  width:15px;height:15px;display:inline-flex;align-items:center;justify-content:center;
+  border-radius:50%;font-size:13px;line-height:1;opacity:.55;cursor:pointer;transition:all .12s var(--ease);
+}
+.pill-del:hover{opacity:1;background:rgba(255,255,255,0.18);}
+
+/* ---------- IDENTITY KIT ---------- */
+.idkit-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:12px;}
+.idkit-card{
+  background:var(--bg-elevated-2);border:1px solid var(--border-glass);border-radius:var(--radius-md);
+  padding:14px;display:flex;flex-direction:column;gap:0;animation:cardIn .32s var(--ease) both;
+}
+.idkit-header{display:flex;align-items:center;gap:10px;}
+.idkit-header-text{flex:1;min-width:0;}
+.idkit-username{font-family:var(--font-mono);font-weight:700;font-size:13.5px;color:var(--text-primary);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.idkit-sub{font-size:10.5px;color:var(--text-muted);margin-top:1px;}
+.idkit-row{display:flex;align-items:center;gap:8px;padding-top:9px;margin-top:9px;border-top:1px dashed var(--border-glass);}
+.idkit-row svg{width:14px;height:14px;flex:0 0 14px;color:var(--text-muted);}
+.idkit-value{flex:1;min-width:0;font-size:12px;color:var(--text-secondary);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.idkit-value.mono{font-family:var(--font-mono);}
+.icon-btn-sm{
+  width:24px;height:24px;flex:0 0 24px;border-radius:7px;display:inline-flex;align-items:center;justify-content:center;
+  background:transparent;border:1px solid transparent;color:var(--text-muted);cursor:pointer;transition:all .14s var(--ease);
+}
+.icon-btn-sm svg{width:13px;height:13px;}
+.icon-btn-sm:hover{background:var(--surface-glass-hover);color:var(--text-primary);border-color:var(--border-glass);}
 
 /* ---------- EMAIL VARIANT ROW ---------- */
 .email-variant{
@@ -943,6 +980,10 @@ input{font-family:inherit;}
             <svg class="icon" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="7" cy="7" r="2.5"/><circle cx="14" cy="8.5" r="2"/><path d="M3 16.5c0-2.5 1.8-4.2 4-4.2s4 1.7 4 4.2M12.5 16.5c0-2-1.4-3.4-3-3.9"/></svg>
             Group / party generator
           </button>
+          <button class="gen-subtab" data-gensub="identitykit">
+            <svg class="icon" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="4.5" width="15" height="11" rx="2"/><circle cx="7.5" cy="10" r="1.8"/><path d="M11.5 8.5h4M11.5 11.5h3"/></svg>
+            Identity Kit
+          </button>
         </div>
 
         <div class="gen-subview active" id="gensub-standard">
@@ -1149,6 +1190,24 @@ input{font-family:inherit;}
           </div>
         </div>
 
+        <div class="gen-subview" id="gensub-identitykit">
+          <div class="settings-card glass">
+            <div class="settings-section-title">Identity Kit</div>
+            <div class="settings-section-sub">One click bundles a username, an email variant, a passphrase and an identicon into a single persona — instead of visiting four sub-tabs separately. Handy for throwaway signups, RP characters, or QA test accounts. Uses your current categories, format, and Email Pairing settings.</div>
+            <div class="settings-inline">
+              <input type="number" id="idKitCount" class="settings-number-input" min="1" max="12" value="1">
+              <button class="btn btn-secondary btn-sm" id="idKitGenerateBtn">Generate Identity Kit</button>
+            </div>
+            <div class="settings-inline" style="margin-top:12px;">
+              <button class="btn btn-ghost btn-sm" id="idKitCopyAllBtn">Copy all</button>
+              <button class="btn btn-ghost btn-sm" id="idKitExportBtn">Download</button>
+            </div>
+            <div id="idKitResults" style="margin-top:14px;">
+              <div style="font-size:12px;color:var(--text-muted);">Hit generate to create your first persona.</div>
+            </div>
+          </div>
+        </div>
+
       </section>
 
       <!-- ============ HISTORY VIEW ============ -->
@@ -1214,6 +1273,11 @@ input{font-family:inherit;}
             <button class="btn btn-danger-ghost btn-sm" id="favBulkDeleteBtn">Remove</button>
           </div>
         </div>
+        <div class="fav-collections-manage">
+          <input type="text" id="newCollectionInput" class="settings-text-input" placeholder="New collection name (e.g. Twitch alt ideas)…" maxlength="30" style="max-width:240px;">
+          <button class="btn btn-secondary btn-sm" id="addCollectionBtn">+ Add collection</button>
+        </div>
+        <div class="pill-group" id="favCollectionFilterBar" style="display:none;margin-bottom:12px;"></div>
         <div class="pill-group" id="favTagFilterBar" style="display:none;margin-bottom:12px;"></div>
         <div class="list" id="favoritesList"></div>
         <div class="empty-state" id="favEmpty">
@@ -1609,6 +1673,16 @@ input{font-family:inherit;}
           </div>
         </div>
 
+        <div class="settings-card glass" id="profilesCard">
+          <div class="settings-section-title">Settings profiles</div>
+          <div class="settings-section-sub">Save your current Format + Filter setup as a named preset — e.g. "Gaming," "Professional," "D&amp;D" — and switch with one click. Lighter-weight than a full session export/import when all you want is to swap a recipe.</div>
+          <div class="settings-inline">
+            <input type="text" id="newProfileInput" class="settings-text-input" placeholder="Profile name (e.g. Gaming)" maxlength="30" style="max-width:220px;">
+            <button class="btn btn-secondary btn-sm" id="saveProfileBtn">Save current as profile</button>
+          </div>
+          <div class="pill-group" id="settingsProfilesList" style="margin-top:14px;"></div>
+        </div>
+
         <div class="settings-card glass">
           <div class="settings-section-title">Session data</div>
           <div class="settings-section-sub">Save everything — history, favorites, settings — to resume later, fully offline</div>
@@ -1820,6 +1894,9 @@ const state = {
   historySearch: '',
   favSearch: '',
   favTagFilter: '',
+  favCollectionFilter: '',
+  favoriteCollections: [],
+  settingsProfiles: {},
   pendingEncryptedSession: null
 };
 
@@ -2980,6 +3057,7 @@ const RELOAD_SVG = '<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" s
 const KEY_SVG = '<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="6.5" cy="13.5" r="3"/><path d="M8.6 11.4 15 5M13 7l2 2M15.5 4.5l2 2"/></svg>';
 const DICE_SVG = '<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="14" height="14" rx="3"/><circle cx="7" cy="7" r="1" fill="currentColor" stroke="none"/><circle cx="13" cy="13" r="1" fill="currentColor" stroke="none"/><circle cx="10" cy="10" r="1" fill="currentColor" stroke="none"/></svg>';
 const SPEAK_SVG = '<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8v4h3l4 3.5V4.5L7 8H4z"/><path d="M13.5 7.2a3.5 3.5 0 0 1 0 5.6M15.8 5a6.5 6.5 0 0 1 0 10"/></svg>';
+const ID_SVG = '<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="4.5" width="15" height="11" rx="2"/><circle cx="7.5" cy="10" r="1.8"/><path d="M11.5 8.5h4M11.5 11.5h3"/></svg>';
 
 function emailRowHTML(item){
   if (!item.email) return '';
@@ -2992,6 +3070,7 @@ function bindEmailRow(container, item){
 function typeBadgeHTML(item){
   if (item.type === 'passphrase') return `<span class="type-badge" title="Passphrase">${KEY_SVG}</span>`;
   if (item.type === 'random') return `<span class="type-badge" title="Random / throwaway">${DICE_SVG}</span>`;
+  if (item.type === 'identity') return `<span class="type-badge" title="Identity Kit persona">${ID_SVG}</span>`;
   return '';
 }
 
@@ -3312,6 +3391,8 @@ function favItemHTML(item){
   const isSelected = state.selectedFavorites.has(item.username);
   const tags = item.cats.map(c => `<span class="tag-dot" style="--tag-color:${CATEGORY_COLORS[c] || '#7C5CFF'}" title="${escapeHTML(c)}"></span>`).join('');
   const itemTags = Array.isArray(item.tags) ? item.tags : [];
+  const collectionOptions = state.favoriteCollections.map(c =>
+    `<option value="${escapeHTML(c)}" ${item.collection===c?'selected':''}>${escapeHTML(c)}</option>`).join('');
   return `
     <div class="list-item" data-username="${escapeHTML(item.username)}">
       <input type="checkbox" class="select-checkbox" data-action="select" ${isSelected?'checked':''} aria-label="Select">
@@ -3329,8 +3410,14 @@ function favItemHTML(item){
         <button class="icon-btn copy-btn" title="Copy" data-action="copy">${COPY_SVG}</button>
         <button class="icon-btn" title="Remove from favorites" data-action="remove">${TRASH_SVG}</button>
       </div>
-      <input type="text" class="fav-note-input" data-action="note" placeholder="Add a note…" value="${escapeHTML(item.note || '')}" maxlength="80">
-      <input type="text" class="fav-note-input" data-action="tags" placeholder="Tags, comma separated (e.g. gaming, work)" value="${escapeHTML(itemTags.join(', '))}" maxlength="120" style="margin-top:6px;">
+      <div class="fav-extra-row">
+        <select class="slot-category-select fav-collection-select" data-action="collection" title="Collection">
+          <option value="">Uncategorized</option>
+          ${collectionOptions}
+        </select>
+        <input type="text" class="fav-note-input" data-action="note" placeholder="Note — e.g. claimed on Reddit, June 2026" value="${escapeHTML(item.note || '')}" maxlength="140">
+      </div>
+      <input type="text" class="fav-note-input fav-tags-input" data-action="tags" placeholder="Tags, comma separated (e.g. gaming, work)" value="${escapeHTML(itemTags.join(', '))}" maxlength="120">
     </div>`;
 }
 
@@ -3358,6 +3445,60 @@ function renderFavTagFilter(){
   });
 }
 
+function renderFavCollectionFilter(){
+  const bar = $('#favCollectionFilterBar');
+  if (!bar) return;
+  if (state.favoriteCollections.length === 0){
+    bar.style.display = 'none';
+    bar.innerHTML = '';
+    state.favCollectionFilter = '';
+    return;
+  }
+  bar.style.display = 'flex';
+  const hasUncategorized = Array.from(state.favorites.values()).some(f => !f.collection);
+  let html = `<button class="pill-btn ${state.favCollectionFilter===''?'active':''}" data-favcollection="">All</button>`;
+  state.favoriteCollections.forEach(c => {
+    html += `<button class="pill-btn deletable-pill ${state.favCollectionFilter===c?'active':''}" data-favcollection="${escapeHTML(c)}">${escapeHTML(c)}<span class="pill-del" data-delcollection="${escapeHTML(c)}" title="Delete collection">×</span></button>`;
+  });
+  if (hasUncategorized){
+    html += `<button class="pill-btn ${state.favCollectionFilter==='__uncategorized__'?'active':''}" data-favcollection="__uncategorized__">Uncategorized</button>`;
+  }
+  bar.innerHTML = html;
+  bar.querySelectorAll('[data-favcollection]').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      if (e.target.closest('[data-delcollection]')) return;
+      state.favCollectionFilter = btn.dataset.favcollection;
+      renderFavorites();
+    });
+  });
+  bar.querySelectorAll('[data-delcollection]').forEach(x => {
+    x.addEventListener('click', (e) => {
+      e.stopPropagation();
+      deleteFavoriteCollection(x.dataset.delcollection);
+    });
+  });
+}
+function addFavoriteCollection(name){
+  const clean = String(name || '').trim().slice(0, 30);
+  if (!clean){ toast('Enter a collection name', 'error'); return; }
+  if (state.favoriteCollections.some(c => c.toLowerCase() === clean.toLowerCase())){
+    toast('A collection with that name already exists', 'error');
+    return;
+  }
+  state.favoriteCollections.push(clean);
+  renderFavCollectionFilter();
+  renderFavorites();
+  toast(`Created "${clean}" collection`, 'success');
+}
+function deleteFavoriteCollection(name){
+  state.favoriteCollections = state.favoriteCollections.filter(c => c !== name);
+  state.favorites.forEach(rec => { if (rec.collection === name) rec.collection = ''; });
+  if (state.favCollectionFilter === name) state.favCollectionFilter = '';
+  renderFavCollectionFilter();
+  renderFavorites();
+  toast(`Deleted "${name}" collection`, 'info');
+}
+
 function renderFavorites(){
   const list = $('#favoritesList');
   const empty = $('#favEmpty');
@@ -3366,7 +3507,13 @@ function renderFavorites(){
   if (state.favTagFilter){
     items = items.filter(h => Array.isArray(h.tags) && h.tags.includes(state.favTagFilter));
   }
+  if (state.favCollectionFilter === '__uncategorized__'){
+    items = items.filter(h => !h.collection);
+  } else if (state.favCollectionFilter){
+    items = items.filter(h => h.collection === state.favCollectionFilter);
+  }
   renderFavTagFilter();
+  renderFavCollectionFilter();
 
   $('#favoritesSub').textContent = `${formatNumber(all.length)} saved`;
   renderBulkBar('favorites');
@@ -3396,13 +3543,20 @@ function renderFavorites(){
     if (item) bindEmailRow(el, item);
     el.querySelector('[data-action="note"]').addEventListener('change', (e) => {
       const rec = state.favorites.get(username);
-      if (rec) rec.note = e.target.value.slice(0, 80);
+      if (rec) rec.note = e.target.value.slice(0, 140);
     });
     el.querySelector('[data-action="tags"]').addEventListener('change', (e) => {
       const rec = state.favorites.get(username);
       if (rec){
         rec.tags = e.target.value.split(',').map(t => t.trim().toLowerCase()).filter(Boolean).slice(0, 10);
         renderFavTagFilter();
+      }
+    });
+    el.querySelector('[data-action="collection"]').addEventListener('change', (e) => {
+      const rec = state.favorites.get(username);
+      if (rec){
+        rec.collection = e.target.value;
+        renderFavCollectionFilter();
       }
     });
   });
@@ -4096,6 +4250,61 @@ async function decryptSessionJSON(envelope, password){
 }
 
 /* ============================================================
+   NAMED SETTINGS PROFILES — lightweight save/switch for a full
+   Format + Filter recipe, distinct from a full session export.
+   ============================================================ */
+function saveSettingsProfile(name){
+  const clean = String(name || '').trim().slice(0, 30);
+  if (!clean){ toast('Enter a profile name', 'error'); return; }
+  state.settingsProfiles[clean] = {
+    settings: Object.assign({}, state.settings, { slotCategories: Object.assign({}, state.settings.slotCategories) }),
+    activeCategories: Array.from(state.activeCategories)
+  };
+  renderSettingsProfiles();
+  toast(`Saved "${clean}" profile`, 'success');
+}
+function applySettingsProfile(name){
+  const p = state.settingsProfiles[name];
+  if (!p) return;
+  state.settings = Object.assign({}, DEFAULT_SETTINGS, p.settings, {
+    slotCategories: Object.assign({}, p.settings.slotCategories)
+  });
+  state.activeCategories = new Set((p.activeCategories || []).filter(c => CATEGORIES.includes(c)));
+  renderCategoryList();
+  renderCustomWordInputs();
+  syncSettingsUI();
+  onFilterChange();
+  toast(`Applied "${name}" profile`, 'success');
+}
+function deleteSettingsProfile(name){
+  delete state.settingsProfiles[name];
+  renderSettingsProfiles();
+  toast(`Deleted "${name}" profile`, 'info');
+}
+function renderSettingsProfiles(){
+  const wrap = $('#settingsProfilesList');
+  if (!wrap) return;
+  const names = Object.keys(state.settingsProfiles).sort();
+  if (names.length === 0){
+    wrap.innerHTML = `<div class="field-hint" style="padding:2px;">No saved profiles yet — configure Format + Filters above, then save one.</div>`;
+    return;
+  }
+  wrap.innerHTML = names.map(n => `
+    <button class="pill-btn deletable-pill" data-profile="${escapeHTML(n)}">
+      ${escapeHTML(n)}<span class="pill-del" data-delprofile="${escapeHTML(n)}" title="Delete profile">×</span>
+    </button>`).join('');
+  wrap.querySelectorAll('[data-profile]').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      if (e.target.closest('[data-delprofile]')) return;
+      applySettingsProfile(btn.dataset.profile);
+    });
+  });
+  wrap.querySelectorAll('[data-delprofile]').forEach(x => {
+    x.addEventListener('click', (e) => { e.stopPropagation(); deleteSettingsProfile(x.dataset.delprofile); });
+  });
+}
+
+/* ============================================================
    SESSION SAVE / LOAD
    ============================================================ */
 function serializeSession(includeEmail){
@@ -4117,7 +4326,9 @@ function serializeSession(includeEmail){
     pinned: Array.from(state.pinned),
     generatedCount: state.generatedCount,
     duplicatesAvoided: state.duplicatesAvoided,
-    categoryUsage: state.categoryUsage
+    categoryUsage: state.categoryUsage,
+    favoriteCollections: state.favoriteCollections,
+    settingsProfiles: state.settingsProfiles
   };
   return JSON.stringify(data, null, 2);
 }
@@ -4172,6 +4383,9 @@ function restoreSessionData(data){
   if (typeof data.generatedCount === 'number') state.generatedCount = data.generatedCount;
   if (typeof data.duplicatesAvoided === 'number') state.duplicatesAvoided = data.duplicatesAvoided;
   if (data.categoryUsage) state.categoryUsage = Object.assign({}, state.categoryUsage, data.categoryUsage);
+  state.favoriteCollections = Array.isArray(data.favoriteCollections) ? data.favoriteCollections : [];
+  state.settingsProfiles = (data.settingsProfiles && typeof data.settingsProfiles === 'object') ? data.settingsProfiles : {};
+  state.favCollectionFilter = '';
 
   state.generatedSet = new Set(state.history.map(h => h.username));
   state.selectedHistory = new Set();
@@ -4181,6 +4395,7 @@ function restoreSessionData(data){
   renderCustomWordInputs();
   renderBlocklist();
   renderImportedCategories();
+  renderSettingsProfiles();
   syncSettingsUI();
   $('#emailAddressInput').value = state.email.address || '';
   $('#emailDomainInput').value = state.email.domain || '';
@@ -4699,6 +4914,99 @@ function renderGroupResults(roster){
 }
 
 /* ============================================================
+   IDENTITY KIT — one click bundles a username, email variant,
+   passphrase and identicon into a single persona card. Reuses the
+   current category/format/email-pairing settings so it feels
+   consistent with the rest of the app, regardless of which
+   generation mode is currently active elsewhere.
+   ============================================================ */
+let identityKits = [];
+function generateIdentityKit(){
+  const pool = getFilteredPool();
+  const wc = state.settings.wordCount;
+  if (pool.length < wc) return null;
+
+  const ctx = buildPickerContext(pool);
+  const uParts = buildUsernameParts(ctx, new Array(wc).fill(null), getSlotCategories());
+  const username = applyAffixes(assembleUsername(uParts));
+
+  const pwc = state.settings.passphraseWordCount;
+  let passphrase = '';
+  if (pool.length >= pwc){
+    const pParts = buildUsernameParts(ctx, new Array(pwc).fill(null), []);
+    passphrase = assemblePassphrase(pParts);
+  }
+
+  const email = computeEmailVariant(username) || `${username.toLowerCase()}@example.com`;
+  return { username, email, passphrase, ts: Date.now() };
+}
+function formatIdKitBlock(kit){
+  const lines = [`Username: ${kit.username}`, `Email: ${kit.email}`];
+  if (kit.passphrase) lines.push(`Passphrase: ${kit.passphrase}`);
+  return lines.join('\n');
+}
+function idKitCardHTML(kit, idx){
+  return `
+  <div class="idkit-card" data-idx="${idx}">
+    <div class="idkit-header">
+      ${identiconSVG(kit.username, 36)}
+      <div class="idkit-header-text">
+        <div class="idkit-username">${escapeHTML(kit.username)}</div>
+        <div class="idkit-sub">Identity Kit persona</div>
+      </div>
+      <button class="icon-btn-sm" title="Save username to favorites" data-action="idkit-fav">${STAR_SVG}</button>
+      <button class="icon-btn-sm" title="Copy all fields" data-action="idkit-copyall">${COPY_SVG}</button>
+    </div>
+    <div class="idkit-row">
+      ${MAIL_SVG}
+      <span class="idkit-value">${escapeHTML(kit.email)}</span>
+      <button class="icon-btn-sm" title="Copy email" data-action="idkit-copy" data-field="email">${COPY_SVG}</button>
+    </div>
+    <div class="idkit-row">
+      ${KEY_SVG}
+      <span class="idkit-value mono">${kit.passphrase ? escapeHTML(kit.passphrase) : '—'}</span>
+      ${kit.passphrase ? `<button class="icon-btn-sm" title="Copy passphrase" data-action="idkit-copy" data-field="passphrase">${COPY_SVG}</button>` : ''}
+    </div>
+  </div>`;
+}
+function renderIdentityKits(){
+  const wrap = $('#idKitResults');
+  if (!wrap) return;
+  if (identityKits.length === 0){
+    wrap.innerHTML = `<div style="font-size:12px;color:var(--text-muted);">Hit generate to create your first persona.</div>`;
+    return;
+  }
+  wrap.innerHTML = `<div class="idkit-grid">${identityKits.map(idKitCardHTML).join('')}</div>`;
+  wrap.querySelectorAll('.idkit-card').forEach(card => {
+    const idx = parseInt(card.dataset.idx, 10);
+    const kit = identityKits[idx];
+    card.querySelectorAll('[data-action="idkit-copy"]').forEach(btn => {
+      btn.addEventListener('click', () => copySingle(kit[btn.dataset.field], btn));
+    });
+    const copyAllBtn = card.querySelector('[data-action="idkit-copyall"]');
+    if (copyAllBtn) copyAllBtn.addEventListener('click', async () => {
+      const ok = await copyText(formatIdKitBlock(kit));
+      toast(ok ? 'Copied persona' : 'Copy failed', ok ? 'success' : 'error');
+    });
+    const favBtn = card.querySelector('[data-action="idkit-fav"]');
+    if (favBtn) favBtn.addEventListener('click', () => {
+      if (state.favorites.has(kit.username)){
+        toast('Already in favorites', 'info');
+        return;
+      }
+      const noteParts = [`Email: ${kit.email}`];
+      if (kit.passphrase) noteParts.push(`Passphrase: ${kit.passphrase}`);
+      state.favorites.set(kit.username, {
+        username: kit.username, cats: [], ts: Date.now(), type: 'identity',
+        email: kit.email, tags: ['identity-kit'], note: noteParts.join(' | ').slice(0, 140), collection: ''
+      });
+      renderFavorites(); updateNavBadges(); updateStats();
+      toast('Persona saved to favorites', 'success');
+    });
+  });
+}
+
+/* ============================================================
    COMPARE & SCORE — arbitrary-username strength + platform fit
    ============================================================ */
 function stringCharsetSize(str){
@@ -4978,6 +5286,14 @@ function wireEvents(){
   });
   $('#favBulkCopyBtn').addEventListener('click', () => bulkCopy('favorites'));
   $('#favBulkDeleteBtn').addEventListener('click', bulkDeleteFavorites);
+  $('#addCollectionBtn').addEventListener('click', () => {
+    const input = $('#newCollectionInput');
+    addFavoriteCollection(input.value);
+    input.value = '';
+  });
+  $('#newCollectionInput').addEventListener('keydown', (e) => {
+    if (e.key === 'Enter'){ e.preventDefault(); $('#addCollectionBtn').click(); }
+  });
 
   const onGlobalSearch = debounce((val) => {
     const q = val.trim();
@@ -5111,6 +5427,35 @@ function wireEvents(){
     toast('Roster downloaded', 'success');
   });
 
+  $('#idKitGenerateBtn').addEventListener('click', () => {
+    const count = Math.max(1, Math.min(12, parseInt($('#idKitCount').value, 10) || 1));
+    const newKits = [];
+    for (let i = 0; i < count; i++){
+      const kit = generateIdentityKit();
+      if (!kit) break;
+      newKits.push(kit);
+    }
+    if (newKits.length === 0){
+      toast('Not enough active-category words for the current word count', 'error');
+      return;
+    }
+    identityKits = newKits.concat(identityKits);
+    renderIdentityKits();
+    if (newKits.length < count) toast(`Generated ${newKits.length} of ${count} requested`, 'info');
+    else toast(`Generated ${newKits.length} identity kit${newKits.length > 1 ? 's' : ''}`, 'success');
+  });
+  $('#idKitCopyAllBtn').addEventListener('click', async () => {
+    if (identityKits.length === 0){ toast('Generate a kit first', 'error'); return; }
+    const ok = await copyText(identityKits.map(formatIdKitBlock).join('\n\n'));
+    toast(ok ? `Copied ${identityKits.length} persona${identityKits.length > 1 ? 's' : ''}` : 'Copy failed', ok ? 'success' : 'error');
+  });
+  $('#idKitExportBtn').addEventListener('click', () => {
+    if (identityKits.length === 0){ toast('Generate a kit first', 'error'); return; }
+    const block = identityKits.map(formatIdKitBlock).join('\n\n');
+    downloadFile(`nymbus_identity_kits_${timestampForFilename()}.txt`, block, 'text/plain');
+    toast('Identity kits downloaded', 'success');
+  });
+
   $('#emailAddressInput').addEventListener('input', (e) => { state.email.address = e.target.value; updateEmailPreview(); });
   $('#emailDomainInput').addEventListener('input', (e) => { state.email.domain = e.target.value; updateEmailPreview(); });
 
@@ -5154,6 +5499,14 @@ function wireEvents(){
   $('#importUsernamesBtn').addEventListener('click', importUsernamesToFavorites);
 
   $('#saveSessionBtn').addEventListener('click', saveSession);
+  $('#saveProfileBtn').addEventListener('click', () => {
+    const input = $('#newProfileInput');
+    saveSettingsProfile(input.value);
+    input.value = '';
+  });
+  $('#newProfileInput').addEventListener('keydown', (e) => {
+    if (e.key === 'Enter'){ e.preventDefault(); $('#saveProfileBtn').click(); }
+  });
   $('#loadSessionBtn').addEventListener('click', () => $('#loadSessionInput').click());
   $('#loadSessionInput').addEventListener('change', (e) => {
     const file = e.target.files && e.target.files[0];
@@ -5180,6 +5533,7 @@ function init(){
   renderCustomWordInputs();
   renderBlocklist();
   renderImportedCategories();
+  renderSettingsProfiles();
   syncSettingsUI();
   validateFilterState();
   updateGeneratorSub();
