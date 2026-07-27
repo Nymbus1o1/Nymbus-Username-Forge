@@ -1,4 +1,4 @@
-# ⚡ Nymbus — Username Forge
+# ⚡ Nymbus-Username-Forge
 
 > A single-file, 100% offline generator for usernames, passphrases, and identities — no backend, no build step, no accounts, no tracking.
 
@@ -39,8 +39,8 @@ Nymbus has no dependencies and no build step — it's one HTML file.
 2. Open the `.html` file directly in any modern browser (double-click it, or drag it into a browser window)
 
 ```bash
-git clone https://github.com/<your-username>/Nymbus-Username-Generator.git
-cd Nymbus-Username-Generator
+git clone https://github.com/<your-username>/Nymbus-Username-Forge.git
+cd Nymbus-Username-Forge
 ```
 
 **Serve it locally** *(optional — not required)*
@@ -167,8 +167,8 @@ Pair each generated username with an email variant:
 ## Project Structure
 Currently a single self-contained file:
 ```
-Nymbus-Username-Generator/
-└── nymbus-username-generator.html   # markup, styles, and logic — everything
+Nymbus-Username-Forge/
+└── nymbus-username-forge.html   # markup, styles, and logic — everything
 ```
 For GitHub Pages, rename it to `index.html` at the repo root.
 
@@ -188,7 +188,7 @@ Contributions, bug reports, and word-list suggestions are welcome.
 A few ideas if you're looking for a starting point: more platform presets, more vibe presets, additional word categories, or an export option beyond TXT/CSV/JSON. These are suggestions, not a committed roadmap.
 
 ## License
-No license as of now.
+Choose and add a license file if you haven't already — [MIT](https://choosealicense.com/licenses/mit/) is a common, permissive choice for a small standalone tool like this. Until a license is added, all rights are reserved by default, which means others can't legally reuse or modify the code even though the repo is public.
 
 ---
 
