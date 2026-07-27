@@ -567,9 +567,10 @@ input{font-family:inherit;}
   display:flex;align-items:center;gap:6px;margin-top:7px;padding-top:7px;
   border-top:1px dashed var(--border-glass);cursor:pointer;
   font-family:var(--font-mono);font-size:11.5px;color:var(--text-secondary);
-  transition:color .14s var(--ease);overflow-wrap:anywhere;
+  transition:color .14s var(--ease);min-width:0;
 }
 .email-variant svg{width:12px;height:12px;flex:0 0 12px;opacity:.75;}
+.email-variant span{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 .email-variant:hover{color:var(--accent-2);}
 .email-variant.copied{color:var(--success);}
 .list-item .email-variant{order:10;flex:0 0 100%;width:100%;}
@@ -697,8 +698,8 @@ input{font-family:inherit;}
   animation:cardIn .3s var(--ease) both;
 }
 .list-item:hover{background:var(--surface-glass-hover);border-color:var(--border-glass-strong);}
-.list-item-main{flex:1;min-width:0;display:flex;align-items:center;gap:12px;}
-.list-item-username{font-family:var(--font-mono);font-size:13.5px;font-weight:600;overflow-wrap:anywhere;word-break:break-word;}
+.list-item-main{flex:1;min-width:0;display:flex;align-items:center;gap:12px;flex-wrap:wrap;}
+.list-item-username{font-family:var(--font-mono);font-size:13.5px;font-weight:600;flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 .list-item-meta{display:flex;align-items:center;gap:8px;flex:0 0 auto;}
 .list-item-time{font-size:11px;color:var(--text-muted);font-family:var(--font-mono);white-space:nowrap;}
 .list-item-actions{display:flex;gap:6px;flex:0 0 auto;}
@@ -3061,7 +3062,7 @@ const ID_SVG = '<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" strok
 
 function emailRowHTML(item){
   if (!item.email) return '';
-  return `<div class="email-variant" data-action="copy-email" data-email="${escapeHTML(item.email)}" title="Click to copy">${MAIL_SVG}<span>${escapeHTML(item.email)}</span></div>`;
+  return `<div class="email-variant" data-action="copy-email" data-email="${escapeHTML(item.email)}" title="${escapeHTML(item.email)} — click to copy">${MAIL_SVG}<span>${escapeHTML(item.email)}</span></div>`;
 }
 function bindEmailRow(container, item){
   const row = container.querySelector('[data-action="copy-email"]');
@@ -3339,9 +3340,9 @@ function historyItemHTML(item){
     <div class="list-item" data-username="${escapeHTML(item.username)}">
       <input type="checkbox" class="select-checkbox" data-action="select" ${isSelected?'checked':''} aria-label="Select">
       <div class="list-item-main">
-        <div style="display:flex;align-items:center;gap:8px;">
+        <div style="display:flex;align-items:center;gap:8px;min-width:0;flex:1 1 auto;">
           ${identiconSVG(item.username, 18)}
-          <span class="list-item-username">${escapeHTML(item.username)}${typeBadgeHTML(item)}</span>
+          <span class="list-item-username" title="${escapeHTML(item.username)}">${escapeHTML(item.username)}${typeBadgeHTML(item)}</span>
         </div>
         <div class="username-tags" style="margin-top:0;">${tags}</div>
         ${emailRowHTML(item)}
@@ -3397,9 +3398,9 @@ function favItemHTML(item){
     <div class="list-item" data-username="${escapeHTML(item.username)}">
       <input type="checkbox" class="select-checkbox" data-action="select" ${isSelected?'checked':''} aria-label="Select">
       <div class="list-item-main">
-        <div style="display:flex;align-items:center;gap:8px;">
+        <div style="display:flex;align-items:center;gap:8px;min-width:0;flex:1 1 auto;">
           ${identiconSVG(item.username, 18)}
-          <span class="list-item-username">${escapeHTML(item.username)}${typeBadgeHTML(item)}</span>
+          <span class="list-item-username" title="${escapeHTML(item.username)}">${escapeHTML(item.username)}${typeBadgeHTML(item)}</span>
         </div>
         <div class="username-tags" style="margin-top:0;">${tags}</div>
         ${emailRowHTML(item)}
