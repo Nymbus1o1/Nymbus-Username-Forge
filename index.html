@@ -529,6 +529,9 @@ input{font-family:inherit;}
 .fav-extra-row .fav-collection-select{flex:0 0 auto;max-width:150px;}
 .fav-extra-row .fav-note-input{flex:1;min-width:0;}
 .fav-tags-input{order:11;flex:0 0 100%;width:100%;margin-top:6px;padding-top:8px;border-top:1px dashed var(--border-glass);}
+.fav-pw-row{order:12;margin-top:6px;padding-top:8px;border-top:1px dashed var(--border-glass);}
+.fav-pw-row .fav-pw-input{flex:1;min-width:0;}
+.fav-pw-row .icon-btn{flex:0 0 auto;}
 .list-item{flex-wrap:wrap;}
 
 /* ---------- COLLECTIONS / PROFILES (pill with inline delete) ---------- */
@@ -611,6 +614,11 @@ input{font-family:inherit;}
 .btn-ghost:hover{background:var(--surface-glass);color:var(--text-primary);}
 .btn-danger-ghost{background:transparent;color:var(--danger);border-color:transparent;padding:8px 12px;}
 .btn-danger-ghost:hover{background:var(--danger-soft);}
+.btn-danger{
+  background:linear-gradient(145deg,var(--danger) 0%,#E0475A 100%);
+  color:#fff;box-shadow:0 4px 20px rgba(255,92,108,0.32), inset 0 1px 0 rgba(255,255,255,0.2);
+}
+.btn-danger:hover{box-shadow:0 6px 26px rgba(255,92,108,0.48), inset 0 1px 0 rgba(255,255,255,0.25);filter:brightness(1.06);}
 .btn-sm{padding:7px 12px;font-size:12px;}
 
 .icon-btn{
@@ -786,19 +794,93 @@ input{font-family:inherit;}
   pointer-events:none;
 }
 .toast{
+  position:relative;overflow:hidden;
   display:flex;align-items:center;gap:9px;
   background:var(--bg-elevated-3);border:1px solid var(--border-glass-strong);
   padding:11px 16px;border-radius:var(--radius-sm);font-size:12.5px;font-weight:560;color:var(--text-primary);
   box-shadow:0 12px 32px var(--shadow-toast);
   animation:toastIn .28s var(--ease) both;pointer-events:auto;max-width:320px;
 }
+.toast.has-undo{max-width:360px;}
 .toast.leaving{animation:toastOut .22s var(--ease) forwards;}
 .toast svg{width:15px;height:15px;flex:0 0 15px;}
+.toast>span{flex:1 1 auto;min-width:0;}
 .toast.success svg{color:var(--success);}
 .toast.error svg{color:var(--danger);}
 .toast.info svg{color:var(--accent-2);}
+.toast-undo-btn{
+  flex:0 0 auto;background:transparent;border:none;color:var(--accent-2);
+  font-family:inherit;font-size:12.5px;font-weight:700;cursor:pointer;
+  padding:3px 7px;border-radius:6px;transition:background .14s var(--ease);
+}
+.toast-undo-btn:hover{background:var(--surface-glass-hover);}
+.toast-undo-btn:active{transform:scale(.94);}
+.toast-timer{
+  position:absolute;left:0;bottom:0;height:2px;width:100%;
+  background:var(--accent-2);opacity:.5;transform-origin:left;
+  animation:toastTimer linear forwards;
+}
 @keyframes toastIn{from{opacity:0;transform:translateX(16px) scale(.96);}to{opacity:1;transform:translateX(0) scale(1);}}
 @keyframes toastOut{from{opacity:1;transform:translateX(0);}to{opacity:0;transform:translateX(16px) scale(.96);}}
+@keyframes toastTimer{from{transform:scaleX(1);}to{transform:scaleX(0);}}
+
+/* ---------- MODAL ---------- */
+.modal-overlay{
+  position:fixed;inset:0;background:rgba(0,0,0,0.55);backdrop-filter:blur(3px);
+  display:flex;align-items:center;justify-content:center;z-index:200;
+  padding:20px;opacity:0;pointer-events:none;transition:opacity .16s var(--ease);
+}
+.modal-overlay.show{opacity:1;pointer-events:auto;}
+.modal{
+  background:var(--bg-elevated-2);border:1px solid var(--border-glass-strong);
+  border-radius:var(--radius-lg);box-shadow:0 24px 64px var(--shadow-drawer);
+  width:100%;max-width:460px;max-height:min(640px,86vh);display:flex;flex-direction:column;
+  transform:translateY(10px) scale(.98);transition:transform .18s var(--ease);
+}
+.modal-overlay.show .modal{transform:translateY(0) scale(1);}
+.modal-header{
+  display:flex;align-items:center;justify-content:space-between;gap:10px;
+  padding:16px 18px;border-bottom:1px solid var(--border-glass);flex:0 0 auto;
+}
+.modal-title{font-size:15px;font-weight:700;color:var(--text-primary);}
+.modal-body{padding:18px;overflow-y:auto;flex:1 1 auto;}
+.modal-tabs{display:flex;gap:6px;margin-bottom:16px;}
+.modal-canvas-wrap{
+  display:flex;align-items:center;justify-content:center;
+  background:var(--bg-elevated-3);border:1px solid var(--border-glass);border-radius:var(--radius-md);
+  padding:18px;margin-bottom:14px;
+}
+.modal-canvas-wrap canvas{max-width:100%;height:auto;border-radius:6px;}
+.modal-field-label{font-size:11.5px;font-weight:650;color:var(--text-muted);text-transform:uppercase;letter-spacing:.03em;margin-bottom:6px;}
+.modal-hint{font-size:12px;color:var(--text-muted);line-height:1.5;margin-top:10px;}
+.modal-actions{display:flex;gap:8px;margin-top:14px;}
+.modal-actions .btn{flex:1;}
+
+/* ---------- CONFIRM DIALOG ---------- */
+.confirm-body{display:flex;gap:13px;align-items:flex-start;}
+.confirm-icon{
+  width:38px;height:38px;flex:0 0 38px;border-radius:11px;
+  background:var(--danger-soft);color:var(--danger);
+  display:flex;align-items:center;justify-content:center;
+}
+.confirm-icon svg{width:19px;height:19px;}
+.confirm-text{min-width:0;}
+.confirm-message{font-size:13px;color:var(--text-secondary);line-height:1.55;}
+.code-box{
+  font-family:var(--font-mono);font-size:12px;color:var(--text-primary);
+  background:var(--bg-elevated-3);border:1px solid var(--border-glass);border-radius:var(--radius-sm);
+  padding:10px 12px;word-break:break-all;max-height:90px;overflow-y:auto;user-select:all;
+}
+.pw-table{display:flex;flex-direction:column;gap:8px;max-height:280px;overflow-y:auto;margin-bottom:14px;}
+.pw-row{display:flex;align-items:center;gap:8px;background:var(--surface-glass);border:1px solid var(--border-glass);border-radius:var(--radius-sm);padding:8px 10px;}
+.pw-row-name{display:flex;align-items:center;gap:6px;flex:0 0 128px;min-width:0;font-family:var(--font-mono);font-size:12px;font-weight:600;color:var(--text-primary);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.pw-row input[type="text"], .pw-row input[type="password"]{
+  flex:1;min-width:0;background:var(--bg-elevated-3);border:1px solid var(--border-glass);color:var(--text-primary);
+  font-family:var(--font-mono);font-size:12px;border-radius:var(--radius-xs);padding:6px 8px;outline:none;
+}
+.pw-row input:focus{border-color:var(--accent);}
+.pw-row .icon-btn{width:26px;height:26px;flex:0 0 26px;border-radius:7px;}
+.pw-row .icon-btn svg{width:12px;height:12px;}
 
 /* ---------- MISC ---------- */
 .section-gap{margin-bottom:20px;}
@@ -1257,6 +1339,10 @@ input{font-family:inherit;}
           </div>
           <div class="panel-actions">
             <button class="link-btn" id="favSelectAllBtn">Select all</button>
+            <button class="btn btn-secondary btn-sm" id="favPwExportBtn">
+              <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="4" width="15" height="12" rx="2.2"/><circle cx="7" cy="9.2" r="1.7"/><path d="M4.5 13.5c.6-1.6 2-2.4 2.5-2.4s1.9.8 2.5 2.4M12 8.5h3.5M12 11h3.5"/></svg>
+              Password manager
+            </button>
             <button class="btn btn-secondary btn-sm" id="exportFavBtn">
               <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M10 3v10m0 0-3.5-3.5M10 13l3.5-3.5"/><path d="M4 15.5v.5A2 2 0 0 0 6 18h8a2 2 0 0 0 2-2v-.5"/></svg>
               Export
@@ -1684,6 +1770,18 @@ input{font-family:inherit;}
           <div class="pill-group" id="settingsProfilesList" style="margin-top:14px;"></div>
         </div>
 
+        <div class="settings-card glass" id="shareRecipeCard">
+          <div class="settings-section-title">Share a recipe</div>
+          <div class="settings-section-sub">Turn your current Format + Filter setup into a short code or link someone else can paste in — "here's the exact recipe I used." Doesn't include your history, favorites, or stats.</div>
+          <div class="settings-inline">
+            <button class="btn btn-secondary btn-sm" id="shareRecipeBtn">
+              <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M8.5 11.5a3.2 3.2 0 0 0 4.5 0l2.3-2.3a3.2 3.2 0 0 0-4.5-4.5l-1.2 1.2"/><path d="M11.5 8.5a3.2 3.2 0 0 0-4.5 0L4.7 10.8a3.2 3.2 0 0 0 4.5 4.5l1.2-1.2"/></svg>
+              Share as link / code
+            </button>
+            <button class="btn btn-secondary btn-sm" id="importRecipeBtn">Import a shared recipe</button>
+          </div>
+        </div>
+
         <div class="settings-card glass">
           <div class="settings-section-title">Session data</div>
           <div class="settings-section-sub">Save everything — history, favorites, settings — to resume later, fully offline</div>
@@ -1698,7 +1796,7 @@ input{font-family:inherit;}
             <input type="password" id="encryptPassword" class="settings-text-input" placeholder="Password" style="max-width:200px;">
             <input type="password" id="encryptPasswordConfirm" class="settings-text-input" placeholder="Confirm password" style="max-width:200px;">
           </div>
-          <div class="field-hint" style="margin-bottom:14px;">Unencrypted backups never include your paired email address — only encrypted ones do.</div>
+          <div class="field-hint" style="margin-bottom:14px;">Unencrypted backups never include your paired email address or any passwords you've attached to favorites — only encrypted ones do.</div>
 
           <div class="settings-inline">
             <button class="btn btn-secondary btn-sm" id="saveSessionBtn">
@@ -1739,6 +1837,302 @@ input{font-family:inherit;}
 </div>
 
 <div class="toast-container" id="toastContainer"></div>
+
+<!-- Reusable modal, used by Share (QR/name-card), Password manager export, and Settings link features -->
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal" id="modalBox" role="dialog" aria-modal="true">
+    <div class="modal-header">
+      <div class="modal-title" id="modalTitle"></div>
+      <button class="icon-btn" id="modalCloseBtn" title="Close" aria-label="Close">
+        <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M5 5l10 10M15 5L5 15"/></svg>
+      </button>
+    </div>
+    <div class="modal-body" id="modalBody"></div>
+  </div>
+</div>
+
+<script>
+// ============================================================
+// NymQR — minimal from-scratch, fully-offline QR encoder.
+// Byte mode, versions 1-5, EC level L, mask pattern 0 (single
+// Reed-Solomon block only — keeps this self-contained and
+// verifiable without needing multi-block interleaving).
+// ============================================================
+const NymQR = (function(){
+  // ---- GF(256) tables ----
+  const EXP = new Array(512);
+  const LOG = new Array(256);
+  (function initGF(){
+    let x = 1;
+    for (let i = 0; i < 255; i++){
+      EXP[i] = x;
+      LOG[x] = i;
+      x <<= 1;
+      if (x & 0x100) x ^= 0x11D;
+    }
+    for (let i = 255; i < 512; i++) EXP[i] = EXP[i-255];
+  })();
+  function gfMul(a,b){ if (a===0||b===0) return 0; return EXP[LOG[a]+LOG[b]]; }
+
+  function rsGeneratorPoly(degree){
+    let g = [1];
+    for (let i = 0; i < degree; i++){
+      const next = new Array(g.length+1).fill(0);
+      for (let j=0;j<g.length;j++){
+        next[j] ^= g[j];
+        next[j+1] ^= gfMul(g[j], EXP[i]);
+      }
+      g = next;
+    }
+    return g;
+  }
+  function rsEncode(dataBytes, ecCount){
+    const gen = rsGeneratorPoly(ecCount);
+    const msg = dataBytes.concat(new Array(ecCount).fill(0));
+    for (let i=0;i<dataBytes.length;i++){
+      const coef = msg[i];
+      if (coef !== 0){
+        for (let j=0;j<gen.length;j++){
+          msg[i+j] ^= gfMul(gen[j], coef);
+        }
+      }
+    }
+    return msg.slice(dataBytes.length);
+  }
+
+  // Version capacity table, EC level L only, versions 1-5 — the only
+  // (version, EC-level) combinations below version 6 that use a single
+  // Reed-Solomon block (confirmed against the official RS block table),
+  // which keeps placement correct without needing block interleaving.
+  // [totalCodewords, ecCodewords, dataCodewords]
+  const VERSION_INFO = {
+    L: {1:[26,7,19], 2:[44,10,34], 3:[70,15,55], 4:[100,20,80], 5:[134,26,108]}
+  };
+  const ALIGNMENT_POS = {1:[], 2:[6,18], 3:[6,22], 4:[6,26], 5:[6,30]};
+  const REMAINDER_BITS = {1:0,2:7,3:7,4:7,5:7};
+
+  function utf8Bytes(str){
+    const bytes = [];
+    for (let i=0;i<str.length;i++){
+      let code = str.codePointAt(i);
+      if (code > 0xFFFF) i++;
+      if (code < 0x80) bytes.push(code);
+      else if (code < 0x800){
+        bytes.push(0xC0 | (code>>6), 0x80 | (code&0x3F));
+      } else if (code < 0x10000){
+        bytes.push(0xE0 | (code>>12), 0x80 | ((code>>6)&0x3F), 0x80 | (code&0x3F));
+      } else {
+        bytes.push(0xF0 | (code>>18), 0x80 | ((code>>12)&0x3F), 0x80 | ((code>>6)&0x3F), 0x80 | (code&0x3F));
+      }
+    }
+    return bytes;
+  }
+
+  function pickVersion(byteLen, ecLevel){
+    const table = VERSION_INFO[ecLevel];
+    for (let v=1; v<=5; v++){
+      const info = table[v];
+      const headerBits = 4 + 8;
+      const capacityBits = info[2]*8;
+      const maxBytes = Math.floor((capacityBits - headerBits) / 8);
+      if (byteLen <= maxBytes) return v;
+    }
+    return null;
+  }
+
+  function encodeDataBits(bytes, dataCodewords){
+    const bits = [];
+    const pushBits = (val, len) => { for (let i=len-1;i>=0;i--) bits.push((val>>i)&1); };
+    pushBits(0b0100, 4);
+    pushBits(bytes.length, 8);
+    bytes.forEach(b => pushBits(b, 8));
+    const capacityBits = dataCodewords*8;
+    for (let i=0;i<4 && bits.length<capacityBits;i++) bits.push(0);
+    while (bits.length % 8 !== 0) bits.push(0);
+    const padBytes = [0xEC,0x11];
+    let pi = 0;
+    while (bits.length < capacityBits){
+      const b = padBytes[pi % 2]; pi++;
+      for (let i=7;i>=0;i--) bits.push((b>>i)&1);
+    }
+    const dataBytes = [];
+    for (let i=0;i<bits.length;i+=8){
+      let v=0; for (let j=0;j<8;j++) v=(v<<1)|bits[i+j];
+      dataBytes.push(v);
+    }
+    return dataBytes;
+  }
+
+  function bitsFromCodewords(codewords, remainderBits){
+    const bits = [];
+    codewords.forEach(cw => { for (let i=7;i>=0;i--) bits.push((cw>>i)&1); });
+    for (let i=0;i<remainderBits;i++) bits.push(0);
+    return bits;
+  }
+
+  function buildMatrix(version){
+    const size = 17 + 4*version;
+    const matrix = Array.from({length:size},()=>new Array(size).fill(0));
+    const reserved = Array.from({length:size},()=>new Array(size).fill(false));
+    function setFn(r,c,val){ if (r<0||r>=size||c<0||c>=size) return; matrix[r][c]=val; reserved[r][c]=true; }
+    function placeFinder(r0,c0){
+      for (let r=-1;r<=7;r++) for (let c=-1;c<=7;c++){
+        const rr=r0+r, cc=c0+c;
+        if (rr<0||rr>=size||cc<0||cc>=size) continue;
+        const isBorder = (r===0||r===6||c===0||c===6) && r>=0&&r<=6&&c>=0&&c<=6;
+        const isCenter = r>=2&&r<=4&&c>=2&&c<=4;
+        let val = 0;
+        if (r>=0&&r<=6&&c>=0&&c<=6){
+          val = isBorder ? 1 : (isCenter ? 1 : 0);
+        } else {
+          val = 0;
+        }
+        setFn(rr,cc,val);
+      }
+    }
+    placeFinder(0,0);
+    placeFinder(0,size-7);
+    placeFinder(size-7,0);
+    for (let i=8;i<size-8;i++){
+      const val = (i%2===0)?1:0;
+      if (!reserved[6][i]) setFn(6,i,val);
+      if (!reserved[i][6]) setFn(i,6,val);
+    }
+    const positions = ALIGNMENT_POS[version] || [];
+    const centers = [];
+    positions.forEach(r => positions.forEach(c => centers.push([r,c])));
+    centers.forEach(([cr,cc]) => {
+      const nearTL = cr<=8 && cc<=8;
+      const nearTR = cr<=8 && cc>=size-9;
+      const nearBL = cr>=size-9 && cc<=8;
+      if (nearTL||nearTR||nearBL) return;
+      for (let r=-2;r<=2;r++) for (let c=-2;c<=2;c++){
+        const isBorder = Math.max(Math.abs(r),Math.abs(c))===2;
+        const isCenter = r===0&&c===0;
+        setFn(cr+r,cc+c, (isBorder||isCenter)?1:0);
+      }
+    });
+    setFn(4*version+9, 8, 1);
+    for (let i=0;i<=8;i++){ if(i!==6){ reserved[8][i]=true; reserved[i][8]=true; } }
+    for (let i=0;i<8;i++){ reserved[8][size-1-i]=true; reserved[size-1-i][8]=true; }
+    reserved[size-8][8]=true;
+    return {matrix, reserved, size};
+  }
+
+  function placeData(matrix, reserved, size, dataBits){
+    let bitIndex = 0;
+    let dir = -1;
+    let col = size-1;
+    let row = size-1;
+    while (col > 0){
+      if (col === 6) col--;
+      for (;;){
+        for (let c=0;c<2;c++){
+          const cc = col-c;
+          if (!reserved[row][cc]){
+            const bit = bitIndex < dataBits.length ? dataBits[bitIndex] : 0;
+            matrix[row][cc] = bit;
+            bitIndex++;
+          }
+        }
+        row += dir;
+        if (row<0 || row>=size){
+          dir = -dir;
+          row += dir;
+          col -= 2;
+          break;
+        }
+      }
+    }
+    return bitIndex;
+  }
+
+  function applyMask0(matrix, reserved, size){
+    for (let r=0;r<size;r++) for (let c=0;c<size;c++){
+      if (reserved[r][c]) continue;
+      if ((r+c)%2===0) matrix[r][c] ^= 1;
+    }
+  }
+
+  function bchEncode(data, generator, ecBitLength){
+    let g = data << ecBitLength;
+    const bitLen = (n) => { let l=0; while(n){l++; n>>>=1;} return l; };
+    const msbGen = bitLen(generator);
+    let msbG = bitLen(g);
+    while (msbG >= msbGen){
+      g ^= generator << (msbG - msbGen);
+      msbG = bitLen(g);
+    }
+    return g;
+  }
+  function formatInfoBits(ecIndicator, mask){
+    const data = (ecIndicator<<3)|mask;
+    const rem = bchEncode(data, 0b10100110111, 10);
+    let bits = (data<<10)|rem;
+    bits ^= 0b101010000010010;
+    return bits;
+  }
+  function placeFormatInfo(matrix, size, bits){
+    const msb = (k) => (bits >> (14-k)) & 1;
+    const lsb = (k) => (bits >> k) & 1;
+    let k = 0;
+    for (let i=0;i<=5;i++) matrix[8][i] = msb(k++);
+    matrix[8][7] = msb(k++);
+    matrix[8][8] = msb(k++);
+    matrix[7][8] = msb(k++);
+    for (let i=5;i>=0;i--) matrix[i][8] = msb(k++);
+    k = 0;
+    for (let i=0;i<8;i++) matrix[8][size-1-i] = lsb(k++);
+    for (let i=0;i<7;i++) matrix[size-7+i][8] = lsb(k++);
+  }
+
+  function generate(text){
+    const ecLevel = 'L';
+    const bytes = utf8Bytes(text);
+    const version = pickVersion(bytes.length, ecLevel);
+    if (!version) return null;
+    const info = VERSION_INFO[ecLevel][version];
+    const [totalCw, ecCw, dataCw] = info;
+    const dataBytes = encodeDataBits(bytes, dataCw);
+    const ecBytes = rsEncode(dataBytes, ecCw);
+    const allCodewords = dataBytes.concat(ecBytes);
+    const dataBits = bitsFromCodewords(allCodewords, REMAINDER_BITS[version]);
+    const {matrix, reserved, size} = buildMatrix(version);
+    placeData(matrix, reserved, size, dataBits);
+    applyMask0(matrix, reserved, size);
+    const ecIndicator = 0b01;
+    const fmtBits = formatInfoBits(ecIndicator, 0);
+    placeFormatInfo(matrix, size, fmtBits);
+    return {matrix, size, version, ecLevel};
+  }
+
+  function toCanvas(canvas, matrix, opts){
+    opts = opts || {};
+    const scale = opts.scale || 8;
+    const margin = opts.margin != null ? opts.margin : 4;
+    const dark = opts.dark || '#000000';
+    const light = opts.light || '#ffffff';
+    const size = matrix.length;
+    const px = (size + margin*2) * scale;
+    canvas.width = px;
+    canvas.height = px;
+    const ctx = canvas.getContext('2d');
+    ctx.fillStyle = light;
+    ctx.fillRect(0, 0, px, px);
+    ctx.fillStyle = dark;
+    for (let r=0;r<size;r++){
+      for (let c=0;c<size;c++){
+        if (matrix[r][c]){
+          ctx.fillRect((c+margin)*scale, (r+margin)*scale, scale, scale);
+        }
+      }
+    }
+    return canvas;
+  }
+
+  return { generate, toCanvas };
+})();
+</script>
 
 <script>
 (() => {
@@ -1958,6 +2352,17 @@ function toTitle(w){
   return w.charAt(0).toUpperCase() + w.slice(1).toLowerCase();
 }
 function randInt(max){ return Math.floor(Math.random() * max); }
+function quickPassphrase(){
+  const cats = Object.keys(WORD_DB);
+  const words = [];
+  for (let i=0;i<4;i++){
+    const cat = cats[randInt(cats.length)];
+    const list = WORD_DB[cat];
+    words.push(list[randInt(list.length)].toLowerCase());
+  }
+  const digits = String(randInt(100)).padStart(2,'0');
+  return words.join('-') + '-' + digits;
+}
 
 function sanitizeCustomWord(raw){
   const cleaned = String(raw || '').replace(/[^A-Za-z]/g, '').slice(0, 24);
@@ -2338,6 +2743,42 @@ function downloadFile(filename, content, mime){
   setTimeout(() => URL.revokeObjectURL(url), 1000);
 }
 function downloadText(filename, content){ downloadFile(filename, content, 'text/plain'); }
+function downloadCanvasPNG(canvas, filename){
+  canvas.toBlob((blob) => {
+    if (!blob){ toast('Could not create image', 'error'); return; }
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+  }, 'image/png');
+}
+
+/* ============================================================
+   MODAL — reusable overlay used by Share (QR / name-card),
+   Password manager export, and Settings link features.
+   ============================================================ */
+function openModal(title, bodyHTML, opts){
+  opts = opts || {};
+  $('#modalTitle').textContent = title;
+  $('#modalBody').innerHTML = bodyHTML;
+  $('#modalOverlay').classList.add('show');
+  document.addEventListener('keydown', modalEscHandler);
+  if (typeof opts.onOpen === 'function') opts.onOpen($('#modalBody'));
+}
+function closeModal(){
+  $('#modalOverlay').classList.remove('show');
+  document.removeEventListener('keydown', modalEscHandler);
+  setTimeout(() => { $('#modalBody').innerHTML = ''; }, 180);
+}
+function modalEscHandler(e){ if (e.key === 'Escape') closeModal(); }
+function wireModalShell(){
+  $('#modalCloseBtn').addEventListener('click', closeModal);
+  $('#modalOverlay').addEventListener('click', (e) => { if (e.target.id === 'modalOverlay') closeModal(); });
+}
 
 function csvEscape(val){
   const s = String(val == null ? '' : val);
@@ -2405,6 +2846,74 @@ function toast(message, type){
     el.classList.add('leaving');
     setTimeout(() => el.remove(), 240);
   }, 2600);
+}
+
+/* ============================================================
+   CONFIRM + UNDO — shared helpers wrapping every destructive
+   action (clear / remove / delete). confirmAction() gates the
+   action behind an explicit Cancel/Confirm modal; undoToast()
+   then gives a short window to reverse it after it's done.
+   ============================================================ */
+const WARNING_SVG = '<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M10 2.2 18.4 16.8a1 1 0 0 1-.87 1.5H2.47a1 1 0 0 1-.87-1.5L10 2.2z"/><path d="M10 8v3.6M10 14.1v.1"/></svg>';
+
+// opts: { title, message, confirmText='Delete', cancelText='Cancel', onConfirm }
+// onConfirm only fires if the person explicitly confirms; cancelling or
+// dismissing the modal (overlay click / Escape) leaves everything untouched.
+function confirmAction(opts){
+  opts = opts || {};
+  const title = opts.title || 'Are you sure?';
+  const message = opts.message || 'This action cannot be undone.';
+  const confirmText = opts.confirmText || 'Delete';
+  const cancelText = opts.cancelText || 'Cancel';
+  openModal(title, `
+    <div class="confirm-body">
+      <div class="confirm-icon">${WARNING_SVG}</div>
+      <div class="confirm-text">
+        <div class="confirm-message">${escapeHTML(message)}</div>
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-secondary" id="confirmCancelBtn">${escapeHTML(cancelText)}</button>
+      <button class="btn btn-danger" id="confirmOkBtn">${escapeHTML(confirmText)}</button>
+    </div>
+  `, {
+    onOpen: (root) => {
+      root.querySelector('#confirmCancelBtn').addEventListener('click', closeModal);
+      root.querySelector('#confirmOkBtn').addEventListener('click', () => {
+        closeModal();
+        if (typeof opts.onConfirm === 'function') opts.onConfirm();
+      });
+      // Default focus sits on Cancel, not the destructive button, so a
+      // stray Enter press right after opening can't confirm by accident.
+      root.querySelector('#confirmCancelBtn').focus();
+    }
+  });
+}
+
+// Shows `message` with an Undo button for `duration` ms. The destructive
+// action has already been applied by the time this is called — onUndo()
+// just needs to reverse it (restore a snapshot + re-render). If the toast
+// times out or is dismissed without clicking Undo, the action stands.
+function undoToast(message, onUndo, duration){
+  duration = duration || 6000;
+  const container = $('#toastContainer');
+  const el = document.createElement('div');
+  el.className = 'toast info has-undo';
+  el.innerHTML = `${ICONS.info}<span>${escapeHTML(message)}</span><button class="toast-undo-btn" type="button">Undo</button><div class="toast-timer"></div>`;
+  container.appendChild(el);
+  const timerBar = el.querySelector('.toast-timer');
+  timerBar.style.animationDuration = `${duration}ms`;
+
+  let settled = false;
+  const remove = () => { el.classList.add('leaving'); setTimeout(() => el.remove(), 240); };
+  const autoTimer = setTimeout(() => { if (settled) return; settled = true; remove(); }, duration);
+  el.querySelector('.toast-undo-btn').addEventListener('click', () => {
+    if (settled) return;
+    settled = true;
+    clearTimeout(autoTimer);
+    remove();
+    if (typeof onUndo === 'function') onUndo();
+  });
 }
 
 /* ============================================================
@@ -3059,6 +3568,13 @@ const KEY_SVG = '<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stro
 const DICE_SVG = '<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="14" height="14" rx="3"/><circle cx="7" cy="7" r="1" fill="currentColor" stroke="none"/><circle cx="13" cy="13" r="1" fill="currentColor" stroke="none"/><circle cx="10" cy="10" r="1" fill="currentColor" stroke="none"/></svg>';
 const SPEAK_SVG = '<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8v4h3l4 3.5V4.5L7 8H4z"/><path d="M13.5 7.2a3.5 3.5 0 0 1 0 5.6M15.8 5a6.5 6.5 0 0 1 0 10"/></svg>';
 const ID_SVG = '<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="4.5" width="15" height="11" rx="2"/><circle cx="7.5" cy="10" r="1.8"/><path d="M11.5 8.5h4M11.5 11.5h3"/></svg>';
+const SHARE_SVG = '<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="15" cy="5" r="2.3"/><circle cx="5" cy="10" r="2.3"/><circle cx="15" cy="15" r="2.3"/><path d="M7 8.8l6-2.6M7 11.2l6 2.6"/></svg>';
+const QR_SVG = '<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="2.5" width="5.5" height="5.5" rx="1"/><rect x="12" y="2.5" width="5.5" height="5.5" rx="1"/><rect x="2.5" y="12" width="5.5" height="5.5" rx="1"/><path d="M12 12h2.2v2.2H12zM15.5 12h2v2H15.5zM12 15.7h2v2h-2zM15.7 15.7h1.8v1.8h-1.8z" fill="currentColor" stroke="none"/></svg>';
+const CARD_SVG = '<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="4" width="15" height="12" rx="2.2"/><circle cx="7" cy="9.2" r="1.7"/><path d="M4.5 13.5c.6-1.6 2-2.4 2.5-2.4s1.9.8 2.5 2.4M12 8.5h3.5M12 11h3.5"/></svg>';
+const EYE_SVG = '<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M2 10s3-5.5 8-5.5S18 10 18 10s-3 5.5-8 5.5S2 10 2 10z"/><circle cx="10" cy="10" r="2.4"/></svg>';
+const EYE_OFF_SVG = '<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3l14 14M8.3 8.4a2.4 2.4 0 0 0 3.3 3.3M6 5.9C3.8 7.1 2 10 2 10s3 5.5 8 5.5c1.4 0 2.6-.4 3.7-1M15.6 13.2C17.2 11.9 18 10 18 10s-3-5.5-8-5.5c-.6 0-1.2.07-1.8.2"/></svg>';
+const LINK_SVG = '<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M8.5 11.5a3.2 3.2 0 0 0 4.5 0l2.3-2.3a3.2 3.2 0 0 0-4.5-4.5l-1.2 1.2"/><path d="M11.5 8.5a3.2 3.2 0 0 0-4.5 0L4.7 10.8a3.2 3.2 0 0 0 4.5 4.5l1.2-1.2"/></svg>';
+const DOWNLOAD_SVG = '<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M10 3v10m0 0-3.5-3.5M10 13l3.5-3.5"/><path d="M4 15.5v.5A2 2 0 0 0 6 18h8a2 2 0 0 0 2-2v-.5"/></svg>';
 
 function emailRowHTML(item){
   if (!item.email) return '';
@@ -3106,6 +3622,202 @@ function identiconSVG(seed, size){
     }
   }
   return `<svg class="identicon" viewBox="0 0 ${size} ${size}" width="${size}" height="${size}" style="border-radius:5px;background:hsl(${hue} 30% 16%);flex:0 0 auto;" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><g fill="hsl(${hue} 70% 62%)">${rects}</g></svg>`;
+}
+
+/* ============================================================
+   SHARE — offline QR code export + shareable name-card PNG
+   ============================================================ */
+function drawIdenticonToCanvas(ctx, seed, x, y, size, radius){
+  const hash = hashStringToInt(String(seed));
+  const hue = hash % 360;
+  let h = hash;
+  const bits = [];
+  for (let i = 0; i < 15; i++){
+    h = (Math.imul(h, 2654435761) + i) >>> 0;
+    bits.push((h & 1) === 1);
+  }
+  ctx.save();
+  const r = radius || 0;
+  roundRect(ctx, x, y, size, size, r);
+  ctx.clip();
+  ctx.fillStyle = `hsl(${hue} 30% 16%)`;
+  ctx.fillRect(x, y, size, size);
+  ctx.fillStyle = `hsl(${hue} 70% 62%)`;
+  const cell = size / 5;
+  for (let row = 0; row < 5; row++){
+    for (let col = 0; col < 3; col++){
+      if (!bits[row * 3 + col]) continue;
+      const cy = y + row*cell;
+      ctx.fillRect(x + col*cell, cy, cell, cell);
+      if (col !== 2) ctx.fillRect(x + (4-col)*cell, cy, cell, cell);
+    }
+  }
+  ctx.restore();
+}
+function roundRect(ctx, x, y, w, h, r){
+  ctx.beginPath();
+  ctx.moveTo(x+r, y);
+  ctx.arcTo(x+w, y, x+w, y+h, r);
+  ctx.arcTo(x+w, y+h, x, y+h, r);
+  ctx.arcTo(x, y+h, x, y, r);
+  ctx.arcTo(x, y, x+w, y, r);
+  ctx.closePath();
+}
+function fitText(ctx, text, x, y, maxWidth, baseSizePx){
+  const fontParts = ctx.font.match(/^(\S+)\s+([\d.]+)px\s+(.+)$/);
+  const weight = fontParts ? fontParts[1] : '600';
+  const family = fontParts ? fontParts[3] : 'sans-serif';
+  let size = baseSizePx;
+  while (size > 10){
+    ctx.font = `${weight} ${size}px ${family}`;
+    if (ctx.measureText(text).width <= maxWidth) break;
+    size -= 1;
+  }
+  ctx.fillText(text, x, y);
+}
+function slugify(s){
+  return String(s).toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'').slice(0,40) || 'item';
+}
+
+function openShareModal(item){
+  const body = `
+    <div class="modal-tabs">
+      <button class="pill-btn active" data-sharetab="qr">QR code</button>
+      <button class="pill-btn" data-sharetab="card">Name card</button>
+    </div>
+    <div id="shareTabBody"></div>
+  `;
+  openModal('Share', body, {
+    onOpen: (root) => {
+      root.querySelectorAll('[data-sharetab]').forEach(btn => {
+        btn.addEventListener('click', () => {
+          root.querySelectorAll('[data-sharetab]').forEach(b => b.classList.toggle('active', b===btn));
+          renderShareTab(btn.dataset.sharetab, item, root.querySelector('#shareTabBody'));
+        });
+      });
+      renderShareTab('qr', item, root.querySelector('#shareTabBody'));
+    }
+  });
+}
+function renderShareTab(tab, item, container){
+  if (tab === 'qr') renderShareQRTab(item, container);
+  else renderShareCardTab(item, container);
+}
+function renderShareQRTab(item, container){
+  container.innerHTML = `
+    <div class="modal-field-label">Value to encode</div>
+    <div class="modal-tabs" style="margin-bottom:10px;">
+      <button class="pill-btn active" data-qrval="username">Username</button>
+      ${item.email ? `<button class="pill-btn" data-qrval="email">Email</button>` : ''}
+    </div>
+    <div class="modal-canvas-wrap"><canvas id="shareQRCanvas"></canvas></div>
+    <div class="code-box" id="shareQRValue"></div>
+    <div class="modal-actions">
+      <button class="btn btn-primary" id="shareQRDownloadBtn">${DOWNLOAD_SVG} Download PNG</button>
+    </div>
+    <div class="modal-hint">Generated entirely offline, right in your browser — nothing is uploaded. Scan with any phone camera to move this handle over.</div>
+  `;
+  let currentVal = item.username;
+  function renderQR(val){
+    currentVal = val;
+    const qr = NymQR.generate(val);
+    const wrap = container.querySelector('.modal-canvas-wrap');
+    if (!qr){
+      wrap.innerHTML = `<div style="font-size:12.5px;color:var(--text-muted);padding:30px;text-align:center;">That value is too long for this offline QR encoder.</div>`;
+      container.querySelector('#shareQRValue').textContent = val;
+      return;
+    }
+    if (!wrap.querySelector('canvas')) wrap.innerHTML = `<canvas id="shareQRCanvas"></canvas>`;
+    NymQR.toCanvas(wrap.querySelector('canvas'), qr.matrix, {scale:8, margin:3, dark:'#000', light:'#fff'});
+    container.querySelector('#shareQRValue').textContent = val;
+  }
+  container.querySelectorAll('[data-qrval]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      container.querySelectorAll('[data-qrval]').forEach(b=>b.classList.toggle('active', b===btn));
+      renderQR(btn.dataset.qrval === 'email' ? item.email : item.username);
+    });
+  });
+  renderQR(item.username);
+  container.querySelector('#shareQRDownloadBtn').addEventListener('click', () => {
+    const canvas = container.querySelector('#shareQRCanvas');
+    if (!canvas){ toast('Nothing to download', 'error'); return; }
+    downloadCanvasPNG(canvas, `nymbus_qr_${slugify(currentVal)}.png`);
+  });
+}
+function renderShareCardTab(item, container){
+  container.innerHTML = `
+    <label style="display:flex;align-items:center;gap:8px;font-size:12.5px;color:var(--text-secondary);margin-bottom:12px;cursor:pointer;">
+      <input type="checkbox" id="shareCardQRToggle"> Include QR code on the card
+    </label>
+    <div class="modal-canvas-wrap"><canvas id="shareCardCanvas"></canvas></div>
+    <div class="modal-actions">
+      <button class="btn btn-primary" id="shareCardDownloadBtn">${DOWNLOAD_SVG} Download PNG</button>
+    </div>
+    <div class="modal-hint">A shareable image with your handle — handy for screenshots or posting.</div>
+  `;
+  const toggle = container.querySelector('#shareCardQRToggle');
+  function render(){ drawNameCard(container.querySelector('#shareCardCanvas'), item, {includeQR: toggle.checked}); }
+  toggle.addEventListener('change', render);
+  render();
+  container.querySelector('#shareCardDownloadBtn').addEventListener('click', () => {
+    downloadCanvasPNG(container.querySelector('#shareCardCanvas'), `nymbus_card_${slugify(item.username)}.png`);
+  });
+}
+function drawNameCard(canvas, item, opts){
+  opts = opts || {};
+  const isDark = document.documentElement.getAttribute('data-theme') !== 'light';
+  const W = 640, H = opts.includeQR ? 420 : 300;
+  const dpr = 2;
+  canvas.width = W*dpr; canvas.height = H*dpr;
+  canvas.style.width = W+'px'; canvas.style.height = H+'px';
+  const ctx = canvas.getContext('2d');
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+  const bg = isDark ? '#111114' : '#FFFFFF';
+  const border = isDark ? 'rgba(255,255,255,0.09)' : 'rgba(15,23,42,0.1)';
+  const textPrimary = isDark ? '#F2F2F5' : '#18181B';
+  const textSecondary = isDark ? '#9A9AA6' : '#52525B';
+  const accent = '#7C5CFF';
+
+  roundRect(ctx, 0, 0, W, H, 22);
+  ctx.fillStyle = bg;
+  ctx.fill();
+  ctx.lineWidth = 1.5;
+  ctx.strokeStyle = border;
+  ctx.stroke();
+
+  const iconSize = 64;
+  drawIdenticonToCanvas(ctx, item.username, 36, 36, iconSize, 14);
+
+  const nameX = 36 + iconSize + 20;
+  ctx.fillStyle = textPrimary;
+  ctx.font = '700 26px ui-monospace, SFMono-Regular, Menlo, monospace';
+  ctx.textBaseline = 'alphabetic';
+  fitText(ctx, item.username, nameX, 68, W - nameX - 36, 26);
+
+  if (item.email){
+    ctx.fillStyle = textSecondary;
+    ctx.font = '500 14px ui-monospace, SFMono-Regular, Menlo, monospace';
+    fitText(ctx, item.email, nameX, 90, W - nameX - 36, 14);
+  }
+
+  ctx.fillStyle = accent;
+  ctx.font = '700 13px -apple-system, Segoe UI, sans-serif';
+  ctx.fillText('⚡ Nymbus', 36, H - 28);
+  ctx.fillStyle = textSecondary;
+  ctx.font = '500 11px -apple-system, Segoe UI, sans-serif';
+  ctx.fillText('Generated offline · username forge', 36, H - 12);
+
+  if (opts.includeQR){
+    const qr = NymQR.generate(item.username);
+    if (qr){
+      const qrCanvas = document.createElement('canvas');
+      NymQR.toCanvas(qrCanvas, qr.matrix, {scale:4, margin:2, dark: isDark?'#F2F2F5':'#18181B', light:'transparent'});
+      const qrSize = 150;
+      const qrX = (W - qrSize)/2, qrY = 130;
+      ctx.drawImage(qrCanvas, qrX, qrY, qrSize, qrSize);
+    }
+  }
 }
 
 /* ============================================================
@@ -3292,6 +4004,7 @@ function usernameCardHTML(item, idx){
         <button class="icon-btn reroll-btn" title="Reroll this one" data-action="reroll">${RELOAD_SVG}</button>
         <button class="icon-btn pin-btn ${isPinned?'is-pinned':''}" title="${isPinned?'Unpin':'Pin to top'}" data-action="pin">${PIN_SVG}</button>
         <button class="icon-btn fav-btn ${isFav?'is-active':''}" title="${isFav?'Remove from favorites':'Add to favorites'}" data-action="fav">${STAR_SVG}</button>
+        <button class="icon-btn share-btn" title="Share (QR / name card)" data-action="share">${SHARE_SVG}</button>
         <button class="icon-btn copy-btn" title="Copy" data-action="copy">${COPY_SVG}</button>
       </div>
     </div>`;
@@ -3321,6 +4034,7 @@ function renderOutput(){
     card.querySelector('[data-action="speak"]').addEventListener('click', () => speakUsername(username));
     const item = items.find(i => i.username === username);
     if (item) bindEmailRow(card, item);
+    card.querySelector('[data-action="share"]').addEventListener('click', () => openShareModal(item || {username}));
   });
 }
 function togglePin(username){
@@ -3351,6 +4065,7 @@ function historyItemHTML(item){
       <div class="list-item-actions">
         <button class="icon-btn speak-btn" title="Pronounce" data-action="speak">${SPEAK_SVG}</button>
         <button class="icon-btn fav-btn ${isFav?'is-active':''}" title="Toggle favorite" data-action="fav">${STAR_SVG}</button>
+        <button class="icon-btn share-btn" title="Share (QR / name card)" data-action="share">${SHARE_SVG}</button>
         <button class="icon-btn copy-btn" title="Copy" data-action="copy">${COPY_SVG}</button>
       </div>
     </div>`;
@@ -3382,6 +4097,7 @@ function renderHistory(){
     });
     const item = items.find(i => i.username === username);
     if (item) bindEmailRow(el, item);
+    el.querySelector('[data-action="share"]').addEventListener('click', () => openShareModal(item || {username}));
   });
 }
 
@@ -3408,6 +4124,7 @@ function favItemHTML(item){
       <div class="list-item-meta"><span class="list-item-time">${timeLabel(item.ts)}</span></div>
       <div class="list-item-actions">
         <button class="icon-btn speak-btn" title="Pronounce" data-action="speak">${SPEAK_SVG}</button>
+        <button class="icon-btn share-btn" title="Share (QR / name card)" data-action="share">${SHARE_SVG}</button>
         <button class="icon-btn copy-btn" title="Copy" data-action="copy">${COPY_SVG}</button>
         <button class="icon-btn" title="Remove from favorites" data-action="remove">${TRASH_SVG}</button>
       </div>
@@ -3419,6 +4136,11 @@ function favItemHTML(item){
         <input type="text" class="fav-note-input" data-action="note" placeholder="Note — e.g. claimed on Reddit, June 2026" value="${escapeHTML(item.note || '')}" maxlength="140">
       </div>
       <input type="text" class="fav-note-input fav-tags-input" data-action="tags" placeholder="Tags, comma separated (e.g. gaming, work)" value="${escapeHTML(itemTags.join(', '))}" maxlength="120">
+      <div class="fav-extra-row fav-pw-row">
+        <input type="password" class="fav-note-input fav-pw-input" data-action="pw" placeholder="Password for export (optional)" value="${escapeHTML(item.pw || '')}" maxlength="128" autocomplete="off">
+        <button class="icon-btn" title="Generate a passphrase" data-action="genpw">${DICE_SVG}</button>
+        <button class="icon-btn" title="Show password" data-action="togglepw">${EYE_SVG}</button>
+      </div>
     </div>`;
 }
 
@@ -3492,12 +4214,32 @@ function addFavoriteCollection(name){
   toast(`Created "${clean}" collection`, 'success');
 }
 function deleteFavoriteCollection(name){
-  state.favoriteCollections = state.favoriteCollections.filter(c => c !== name);
-  state.favorites.forEach(rec => { if (rec.collection === name) rec.collection = ''; });
-  if (state.favCollectionFilter === name) state.favCollectionFilter = '';
-  renderFavCollectionFilter();
-  renderFavorites();
-  toast(`Deleted "${name}" collection`, 'info');
+  const memberCount = Array.from(state.favorites.values()).filter(rec => rec.collection === name).length;
+  confirmAction({
+    title: `Delete "${name}" collection?`,
+    message: memberCount > 0
+      ? `The ${memberCount} favorite${memberCount>1?'s':''} in this collection won't be deleted — they'll just become uncategorized.`
+      : 'This collection has no favorites in it right now.',
+    confirmText: 'Delete',
+    onConfirm: () => {
+      const collectionsSnapshot = state.favoriteCollections.slice();
+      const filterSnapshot = state.favCollectionFilter;
+      const memberUsernames = [];
+      state.favorites.forEach((rec, username) => { if (rec.collection === name) memberUsernames.push(username); });
+      state.favoriteCollections = state.favoriteCollections.filter(c => c !== name);
+      state.favorites.forEach(rec => { if (rec.collection === name) rec.collection = ''; });
+      if (state.favCollectionFilter === name) state.favCollectionFilter = '';
+      renderFavCollectionFilter();
+      renderFavorites();
+      undoToast(`Deleted "${name}" collection`, () => {
+        state.favoriteCollections = collectionsSnapshot;
+        memberUsernames.forEach(u => { const rec = state.favorites.get(u); if (rec) rec.collection = name; });
+        state.favCollectionFilter = filterSnapshot;
+        renderFavCollectionFilter();
+        renderFavorites();
+      });
+    }
+  });
 }
 
 function renderFavorites(){
@@ -3560,6 +4302,26 @@ function renderFavorites(){
         renderFavCollectionFilter();
       }
     });
+    el.querySelector('[data-action="share"]').addEventListener('click', () => openShareModal(item || {username}));
+    const pwInput = el.querySelector('[data-action="pw"]');
+    pwInput.addEventListener('change', (e) => {
+      const rec = state.favorites.get(username);
+      if (rec) rec.pw = e.target.value.slice(0, 128);
+    });
+    el.querySelector('[data-action="genpw"]').addEventListener('click', () => {
+      const rec = state.favorites.get(username);
+      const val = quickPassphrase();
+      pwInput.value = val;
+      pwInput.type = 'text';
+      el.querySelector('[data-action="togglepw"]').innerHTML = EYE_OFF_SVG;
+      if (rec) rec.pw = val;
+      toast('Passphrase generated', 'success');
+    });
+    el.querySelector('[data-action="togglepw"]').addEventListener('click', (e) => {
+      const showing = pwInput.type === 'text';
+      pwInput.type = showing ? 'password' : 'text';
+      e.currentTarget.innerHTML = showing ? EYE_SVG : EYE_OFF_SVG;
+    });
   });
 }
 
@@ -3598,18 +4360,43 @@ function bulkFavorite(){
 }
 function bulkDeleteHistory(){
   const n = state.selectedHistory.size;
-  state.history = state.history.filter(h => !state.selectedHistory.has(h.username));
-  state.selectedHistory.clear();
-  renderHistory();
-  updateNavBadges();
-  toast(`Removed ${n} from history`, 'info');
+  if (n === 0) return;
+  confirmAction({
+    title: `Remove ${formatNumber(n)} from history?`,
+    message: `This removes the ${n} selected username${n>1?'s':''} from your session history.`,
+    confirmText: 'Remove',
+    onConfirm: () => {
+      const snapshot = state.history.slice();
+      state.history = state.history.filter(h => !state.selectedHistory.has(h.username));
+      state.selectedHistory.clear();
+      renderHistory();
+      updateNavBadges();
+      undoToast(`Removed ${n} from history`, () => {
+        state.history = snapshot;
+        renderHistory();
+        updateNavBadges();
+      });
+    }
+  });
 }
 function bulkDeleteFavorites(){
   const n = state.selectedFavorites.size;
-  state.selectedFavorites.forEach(u => state.favorites.delete(u));
-  state.selectedFavorites.clear();
-  renderFavorites(); renderOutput(); renderHistory(); updateNavBadges(); updateStats();
-  toast(`Removed ${n} from favorites`, 'info');
+  if (n === 0) return;
+  confirmAction({
+    title: `Remove ${formatNumber(n)} from favorites?`,
+    message: `This removes the ${n} selected username${n>1?'s':''} from your favorites.`,
+    confirmText: 'Remove',
+    onConfirm: () => {
+      const snapshot = new Map(state.favorites);
+      state.selectedFavorites.forEach(u => state.favorites.delete(u));
+      state.selectedFavorites.clear();
+      renderFavorites(); renderOutput(); renderHistory(); updateNavBadges(); updateStats();
+      undoToast(`Removed ${n} from favorites`, () => {
+        state.favorites = snapshot;
+        renderFavorites(); renderOutput(); renderHistory(); updateNavBadges(); updateStats();
+      });
+    }
+  });
 }
 
 /* ============================================================
@@ -3633,13 +4420,28 @@ function toggleFavorite(username){
   updateStats();
 }
 function removeFavorite(username){
-  state.favorites.delete(username);
-  toast('Removed from favorites', 'info');
-  renderOutput();
-  renderHistory();
-  renderFavorites();
-  updateNavBadges();
-  updateStats();
+  confirmAction({
+    title: 'Remove this favorite?',
+    message: `"${username}" — along with any note, tags, or collection you've set on it — will be removed from Favorites.`,
+    confirmText: 'Remove',
+    onConfirm: () => {
+      const snapshot = state.favorites.get(username);
+      state.favorites.delete(username);
+      renderOutput();
+      renderHistory();
+      renderFavorites();
+      updateNavBadges();
+      updateStats();
+      undoToast('Removed from favorites', () => {
+        if (snapshot) state.favorites.set(username, snapshot);
+        renderOutput();
+        renderHistory();
+        renderFavorites();
+        updateNavBadges();
+        updateStats();
+      });
+    }
+  });
 }
 async function copySingle(username, btnEl){
   const ok = await copyText(username);
@@ -3731,9 +4533,21 @@ function addBlockedWord(raw){
   toast(`Blocked "${toTitle(cleaned)}"`, 'success');
 }
 function removeBlockedWord(word){
-  state.blocklist.delete(word);
-  renderBlocklist();
-  onFilterChange();
+  confirmAction({
+    title: 'Unblock this word?',
+    message: `"${toTitle(word)}" will be allowed to appear in generated usernames again.`,
+    confirmText: 'Unblock',
+    onConfirm: () => {
+      state.blocklist.delete(word);
+      renderBlocklist();
+      onFilterChange();
+      undoToast(`Unblocked "${toTitle(word)}"`, () => {
+        state.blocklist.add(word);
+        renderBlocklist();
+        onFilterChange();
+      });
+    }
+  });
 }
 function renderBlocklist(){
   const wrap = $('#blocklistChips');
@@ -3789,16 +4603,38 @@ function importCategory(name, wordsText){
   toast(`Added "${cleanName}" with ${uniqueWords.length} word${uniqueWords.length>1?'s':''}`, 'success');
 }
 function removeImportedCategory(name){
-  delete state.importedCategories[name];
-  state.activeCategories.delete(name);
-  delete state.categoryUsage[name];
-  delete state.categoryWeights[name];
-  rebuildWordPool();
-  renderCategoryList();
-  renderImportedCategories();
-  updatePronounceableSub();
-  onFilterChange();
-  toast(`Removed "${name}"`, 'info');
+  const wordCount = (state.importedCategories[name] || []).length;
+  confirmAction({
+    title: `Remove "${name}" category?`,
+    message: `This deletes the ${formatNumber(wordCount)} custom word${wordCount>1?'s':''} you imported into this category. Words already used in History or Favorites are unaffected.`,
+    confirmText: 'Remove',
+    onConfirm: () => {
+      const wordsSnapshot = (state.importedCategories[name] || []).slice();
+      const wasActive = state.activeCategories.has(name);
+      const usageSnapshot = state.categoryUsage[name];
+      const weightSnapshot = state.categoryWeights[name];
+      delete state.importedCategories[name];
+      state.activeCategories.delete(name);
+      delete state.categoryUsage[name];
+      delete state.categoryWeights[name];
+      rebuildWordPool();
+      renderCategoryList();
+      renderImportedCategories();
+      updatePronounceableSub();
+      onFilterChange();
+      undoToast(`Removed "${name}"`, () => {
+        state.importedCategories[name] = wordsSnapshot;
+        if (wasActive) state.activeCategories.add(name);
+        if (usageSnapshot !== undefined) state.categoryUsage[name] = usageSnapshot;
+        if (weightSnapshot !== undefined) state.categoryWeights[name] = weightSnapshot;
+        rebuildWordPool();
+        renderCategoryList();
+        renderImportedCategories();
+        updatePronounceableSub();
+        onFilterChange();
+      });
+    }
+  });
 }
 function renderImportedCategories(){
   const wrap = $('#importedCategoriesList');
@@ -4278,9 +5114,20 @@ function applySettingsProfile(name){
   toast(`Applied "${name}" profile`, 'success');
 }
 function deleteSettingsProfile(name){
-  delete state.settingsProfiles[name];
-  renderSettingsProfiles();
-  toast(`Deleted "${name}" profile`, 'info');
+  confirmAction({
+    title: `Delete "${name}" profile?`,
+    message: 'This deletes the saved Format + Filter recipe. Your current settings in the app right now won\'t change.',
+    confirmText: 'Delete',
+    onConfirm: () => {
+      const snapshot = state.settingsProfiles[name];
+      delete state.settingsProfiles[name];
+      renderSettingsProfiles();
+      undoToast(`Deleted "${name}" profile`, () => {
+        if (snapshot) state.settingsProfiles[name] = snapshot;
+        renderSettingsProfiles();
+      });
+    }
+  });
 }
 function renderSettingsProfiles(){
   const wrap = $('#settingsProfilesList');
@@ -4306,6 +5153,181 @@ function renderSettingsProfiles(){
 }
 
 /* ============================================================
+   SHAREABLE SETTINGS LINK — compact Format+Filter recipe code
+   ============================================================ */
+function utf8ToBase64Url(str){
+  const bytes = new TextEncoder().encode(str);
+  let bin = '';
+  bytes.forEach(b => bin += String.fromCharCode(b));
+  return btoa(bin).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');
+}
+function base64UrlToUtf8(b64url){
+  let b64 = String(b64url).replace(/-/g,'+').replace(/_/g,'/');
+  while (b64.length % 4) b64 += '=';
+  const bin = atob(b64);
+  const bytes = new Uint8Array(bin.length);
+  for (let i=0;i<bin.length;i++) bytes[i] = bin.charCodeAt(i);
+  return new TextDecoder().decode(bytes);
+}
+function bitCount(n){ let c=0; while(n){ c += n&1; n>>>=1; } return c; }
+function buildSettingsCode(){
+  const diff = {};
+  for (const k in DEFAULT_SETTINGS){
+    if (k === 'slotCategories') continue;
+    if (JSON.stringify(state.settings[k]) !== JSON.stringify(DEFAULT_SETTINGS[k])) diff[k] = state.settings[k];
+  }
+  if (state.settings.slotCategories && Object.keys(state.settings.slotCategories).length){
+    diff.slotCategories = state.settings.slotCategories;
+  }
+  const payload = { s: diff, cn: CATEGORIES.length };
+  let mask = 0;
+  CATEGORIES.forEach((c,i) => { if (state.activeCategories.has(c)) mask |= (1<<i); });
+  const allMask = (1 << CATEGORIES.length) - 1;
+  if (mask !== allMask) payload.cm = mask;
+  return 'NYM1-' + utf8ToBase64Url(JSON.stringify(payload));
+}
+function parseSettingsCode(code){
+  const trimmed = String(code || '').trim();
+  const m = trimmed.match(/^NYM1-([A-Za-z0-9_-]+)$/);
+  if (!m) return null;
+  try{
+    const payload = JSON.parse(base64UrlToUtf8(m[1]));
+    if (!payload || typeof payload !== 'object' || !payload.s) return null;
+    return payload;
+  }catch(err){ return null; }
+}
+function describeSettingsPayload(payload){
+  const parts = [];
+  const s = payload.s || {};
+  if (s.mode) parts.push(`mode: ${s.mode}`);
+  if (s.wordCount) parts.push(`${s.wordCount} word${s.wordCount>1?'s':''}`);
+  if (s.caseStyle) parts.push(`${s.caseStyle} case`);
+  if (s.separator) parts.push(`${s.separator} separator`);
+  if (s.digitCount) parts.push(`${s.digitCount} digit${s.digitCount>1?'s':''}`);
+  if (payload.cm != null) parts.push(`${bitCount(payload.cm)} categories selected`);
+  const changed = Object.keys(s).length;
+  return parts.length ? parts.slice(0,6).join(' · ') : `${changed} setting${changed===1?'':'s'} changed from default`;
+}
+function applySettingsPayload(payload){
+  const s = payload.s || {};
+  state.settings = Object.assign({}, DEFAULT_SETTINGS, s, {
+    slotCategories: Object.assign({}, s.slotCategories || {})
+  });
+  if (payload.cm != null && payload.cn === CATEGORIES.length){
+    const set = new Set();
+    CATEGORIES.forEach((c,i) => { if ((payload.cm >> i) & 1) set.add(c); });
+    state.activeCategories = set;
+  } else if (payload.cm != null){
+    toast('Category selection couldn\u2019t be restored (word list has changed) \u2014 format settings applied', 'info');
+  }
+  renderCategoryList();
+  renderCustomWordInputs();
+  syncSettingsUI();
+  onFilterChange();
+}
+function openSettingsShareModal(){
+  const code = buildSettingsCode();
+  const url = `${location.origin}${location.pathname}#cfg=${code}`;
+  const body = `
+    <div class="modal-field-label">Recipe code</div>
+    <div class="code-box" id="settingsCodeBox">${escapeHTML(code)}</div>
+    <div class="modal-actions">
+      <button class="btn btn-secondary" id="copyCodeBtn">Copy code</button>
+      <button class="btn btn-secondary" id="showCodeQRBtn">${QR_SVG} Show as QR</button>
+    </div>
+    <div id="settingsQRWrap"></div>
+    <div class="modal-field-label" style="margin-top:18px;">Shareable link</div>
+    <div class="code-box">${escapeHTML(url)}</div>
+    <div class="modal-actions">
+      <button class="btn btn-secondary" id="copyLinkBtn">Copy link</button>
+    </div>
+    <div class="modal-hint">The link only opens straight into this recipe if the other person is using the exact same copy of Nymbus (same URL or file). Otherwise, just share the code above \u2014 they can paste it into Settings \u2192 Import a shared recipe.</div>
+  `;
+  openModal('Share Format + Filter recipe', body, {
+    onOpen: (root) => {
+      root.querySelector('#copyCodeBtn').addEventListener('click', () => {
+        navigator.clipboard.writeText(code).then(() => toast('Code copied', 'success')).catch(() => toast('Could not copy', 'error'));
+      });
+      root.querySelector('#copyLinkBtn').addEventListener('click', () => {
+        navigator.clipboard.writeText(url).then(() => toast('Link copied', 'success')).catch(() => toast('Could not copy', 'error'));
+      });
+      let qrShown = false;
+      root.querySelector('#showCodeQRBtn').addEventListener('click', () => {
+        qrShown = !qrShown;
+        const wrap = root.querySelector('#settingsQRWrap');
+        if (qrShown){
+          const qr = NymQR.generate(code);
+          if (!qr){
+            wrap.innerHTML = `<div class="modal-hint">This recipe is too long to encode as a QR code \u2014 use the code or link instead.</div>`;
+          } else {
+            wrap.innerHTML = `<div class="modal-canvas-wrap" style="margin-top:12px;"><canvas></canvas></div>`;
+            NymQR.toCanvas(wrap.querySelector('canvas'), qr.matrix, {scale:6, margin:3, dark:'#000', light:'#fff'});
+          }
+        } else {
+          wrap.innerHTML = '';
+        }
+      });
+    }
+  });
+}
+function openImportSettingsModal(codeFromLink){
+  const body = `
+    <div class="modal-field-label">Paste a shared recipe code</div>
+    <textarea id="importCodeInput" class="settings-text-input" style="width:100%;min-height:70px;font-family:var(--font-mono);font-size:12px;box-sizing:border-box;resize:vertical;" placeholder="NYM1-...">${escapeHTML(codeFromLink || '')}</textarea>
+    <div id="importPreview" class="modal-hint" style="margin-top:10px;"></div>
+    <div class="modal-actions">
+      <button class="btn btn-primary" id="importApplyBtn">Apply recipe</button>
+    </div>
+    <div class="modal-hint">This replaces your current Format + Filter settings. Your history, favorites, and stats are untouched.</div>
+  `;
+  openModal('Import a shared recipe', body, {
+    onOpen: (root) => {
+      const input = root.querySelector('#importCodeInput');
+      const preview = root.querySelector('#importPreview');
+      function updatePreview(){
+        const payload = parseSettingsCode(input.value);
+        preview.textContent = payload ? describeSettingsPayload(payload) : (input.value.trim() ? 'That doesn\u2019t look like a valid Nymbus recipe code.' : '');
+      }
+      input.addEventListener('input', updatePreview);
+      updatePreview();
+      root.querySelector('#importApplyBtn').addEventListener('click', () => {
+        const payload = parseSettingsCode(input.value);
+        if (!payload){ toast('Invalid recipe code', 'error'); return; }
+        applySettingsPayload(payload);
+        toast('Recipe applied', 'success');
+        closeModal();
+      });
+    }
+  });
+}
+function checkSharedSettingsLink(){
+  const m = location.hash.match(/[#&]cfg=([^&]+)/);
+  if (!m) return;
+  const code = decodeURIComponent(m[1]);
+  const payload = parseSettingsCode(code);
+  history.replaceState(null, '', location.pathname + location.search);
+  if (!payload) return;
+  const summary = describeSettingsPayload(payload);
+  openModal('Import shared recipe?', `
+    <div class="modal-hint" style="margin-bottom:14px;">Someone shared a Format + Filter recipe with you via link:</div>
+    <div class="code-box" style="margin-bottom:14px;">${escapeHTML(summary)}</div>
+    <div class="modal-actions">
+      <button class="btn btn-secondary" id="dismissSharedBtn">Dismiss</button>
+      <button class="btn btn-primary" id="applySharedBtn">Apply recipe</button>
+    </div>
+  `, {
+    onOpen: (root) => {
+      root.querySelector('#dismissSharedBtn').addEventListener('click', closeModal);
+      root.querySelector('#applySharedBtn').addEventListener('click', () => {
+        applySettingsPayload(payload);
+        toast('Recipe applied', 'success');
+        closeModal();
+      });
+    }
+  });
+}
+
+/* ============================================================
    SESSION SAVE / LOAD
    ============================================================ */
 function serializeSession(includeEmail){
@@ -4322,7 +5344,7 @@ function serializeSession(includeEmail){
     history: includeEmail ? state.history : state.history.map(h => { const c = Object.assign({}, h); delete c.email; return c; }),
     favorites: Array.from(state.favorites.entries()).map(([k,v]) => {
       if (includeEmail) return [k, v];
-      const c = Object.assign({}, v); delete c.email; return [k, c];
+      const c = Object.assign({}, v); delete c.email; delete c.pw; return [k, c];
     }),
     pinned: Array.from(state.pinned),
     generatedCount: state.generatedCount,
@@ -4616,11 +5638,24 @@ async function setAutosave(enabled){
   syncAutosaveUI();
 }
 
-async function clearAutosaveData(){
-  await storageDelete(AUTOSAVE_DATA_KEY);
-  autosaveLastSaved = null;
-  toast('Saved data cleared from this browser', 'info');
-  syncAutosaveUI();
+function clearAutosaveData(){
+  confirmAction({
+    title: 'Clear saved data?',
+    message: 'This deletes the auto-saved snapshot stored in this browser. Your current session in this tab keeps working — only the backup copy on disk goes away.',
+    confirmText: 'Clear data',
+    onConfirm: async () => {
+      const snapshot = await storageGet(AUTOSAVE_DATA_KEY);
+      await storageDelete(AUTOSAVE_DATA_KEY);
+      autosaveLastSaved = null;
+      syncAutosaveUI();
+      undoToast('Saved data cleared from this browser', async () => {
+        if (snapshot == null) return;
+        await storageSet(AUTOSAVE_DATA_KEY, snapshot);
+        autosaveLastSaved = new Date();
+        syncAutosaveUI();
+      });
+    }
+  });
 }
 
 // Runs once at startup, before the rest of init(): if auto-save was left on
@@ -5155,6 +6190,114 @@ function exportFavorites(){
 }
 
 /* ============================================================
+   PASSWORD MANAGER EXPORT — Bitwarden CSV / 1Password-Generic CSV
+   ============================================================ */
+function bitwardenCSV(rows, folder){
+  const header = 'folder,favorite,type,name,notes,fields,reprompt,login_uri,login_username,login_password,login_totp';
+  const lines = [header];
+  rows.forEach(r => {
+    lines.push([
+      csvEscape(folder || ''), '0', 'login', csvEscape(r.name), csvEscape(r.notes || ''), '',
+      '0', csvEscape(r.uri || ''), csvEscape(r.username), csvEscape(r.password || ''), ''
+    ].join(','));
+  });
+  return lines.join('\r\n');
+}
+function genericPasswordCSV(rows){
+  const header = 'Title,Website,Username,Password,Notes';
+  const lines = [header];
+  rows.forEach(r => {
+    lines.push([csvEscape(r.name), csvEscape(r.uri || ''), csvEscape(r.username), csvEscape(r.password || ''), csvEscape(r.notes || '')].join(','));
+  });
+  return lines.join('\r\n');
+}
+function openPasswordExportModal(){
+  const all = Array.from(state.favorites.values()).sort((a,b) => b.ts - a.ts);
+  if (all.length === 0){ toast('No favorites to export', 'info'); return; }
+  const preselected = state.selectedFavorites.size ? state.selectedFavorites : null;
+  const rowsHTML = all.map(item => {
+    const checked = preselected ? preselected.has(item.username) : true;
+    return `
+      <div class="pw-row" data-username="${escapeHTML(item.username)}">
+        <input type="checkbox" class="pw-row-check" ${checked?'checked':''} aria-label="Include">
+        <div class="pw-row-name" title="${escapeHTML(item.email || item.username)}">${escapeHTML(item.email || item.username)}</div>
+        <input type="text" class="pw-row-pw" placeholder="password (optional)" value="${escapeHTML(item.pw || '')}" autocomplete="off">
+        <button class="icon-btn pw-row-gen" title="Generate a passphrase">${DICE_SVG}</button>
+      </div>`;
+  }).join('');
+  const body = `
+    <div class="modal-field-label">Format</div>
+    <div class="modal-tabs">
+      <button class="pill-btn active" data-pwformat="bitwarden">Bitwarden</button>
+      <button class="pill-btn" data-pwformat="generic">1Password / Generic</button>
+    </div>
+    <div class="modal-hint" id="pwFormatHint" style="margin:0 0 14px;"></div>
+    <div class="modal-field-label">Folder / title prefix</div>
+    <input type="text" id="pwFolderInput" class="settings-text-input" value="Nymbus" maxlength="40" style="width:100%;margin-bottom:14px;box-sizing:border-box;">
+    <div class="modal-field-label">Credentials (${all.length})</div>
+    <div class="pw-table">${rowsHTML}</div>
+    <div class="modal-actions">
+      <button class="btn btn-secondary" id="pwGenAllBtn">${DICE_SVG} Fill empty</button>
+      <button class="btn btn-primary" id="pwDownloadBtn">${DOWNLOAD_SVG} Download CSV</button>
+    </div>
+    <div class="modal-hint">Passwords stay in memory for this session so you can reuse them — export or an encrypted session save is the only way they leave your device. Autosave and unencrypted exports never include them.</div>
+  `;
+  openModal('Export for password manager', body, {
+    onOpen: (root) => {
+      let format = 'bitwarden';
+      const hints = {
+        bitwarden: 'Matches Bitwarden\u2019s official CSV import format \u2014 in Bitwarden, use Settings \u2192 Import data \u2192 CSV, and it maps automatically.',
+        generic: '1Password doesn\u2019t auto-map CSV columns. Drag this file into 1Password\u2019s import screen, then match Title / Website / Username / Password / Notes \u2014 takes about 10 seconds.'
+      };
+      const hintEl = root.querySelector('#pwFormatHint');
+      hintEl.textContent = hints[format];
+      root.querySelectorAll('[data-pwformat]').forEach(btn => {
+        btn.addEventListener('click', () => {
+          root.querySelectorAll('[data-pwformat]').forEach(b=>b.classList.toggle('active', b===btn));
+          format = btn.dataset.pwformat;
+          hintEl.textContent = hints[format];
+        });
+      });
+      root.querySelectorAll('.pw-row').forEach(rowEl => {
+        rowEl.querySelector('.pw-row-gen').addEventListener('click', () => {
+          rowEl.querySelector('.pw-row-pw').value = quickPassphrase();
+        });
+      });
+      root.querySelector('#pwGenAllBtn').addEventListener('click', () => {
+        root.querySelectorAll('.pw-row').forEach(rowEl => {
+          const input = rowEl.querySelector('.pw-row-pw');
+          if (!input.value) input.value = quickPassphrase();
+        });
+      });
+      root.querySelector('#pwDownloadBtn').addEventListener('click', () => {
+        const folder = root.querySelector('#pwFolderInput').value.trim() || 'Nymbus';
+        const rows = [];
+        root.querySelectorAll('.pw-row').forEach(rowEl => {
+          if (!rowEl.querySelector('.pw-row-check').checked) return;
+          const username = rowEl.dataset.username;
+          const rec = state.favorites.get(username);
+          const pwVal = rowEl.querySelector('.pw-row-pw').value;
+          if (rec) rec.pw = pwVal;
+          rows.push({
+            name: `${folder} - ${username}`,
+            username: (rec && rec.email) ? rec.email : username,
+            password: pwVal,
+            notes: (rec && rec.note) || '',
+            uri: ''
+          });
+        });
+        if (rows.length === 0){ toast('Select at least one favorite', 'error'); return; }
+        const content = format === 'bitwarden' ? bitwardenCSV(rows, folder) : genericPasswordCSV(rows);
+        downloadText(`${slugify(folder)}_${format}.csv`, content);
+        renderFavorites();
+        toast(`Exported ${rows.length} credential${rows.length===1?'':'s'}`, 'success');
+        closeModal();
+      });
+    }
+  });
+}
+
+/* ============================================================
    EVENT WIRING
    ============================================================ */
 function wireEvents(){
@@ -5200,14 +6343,34 @@ function wireEvents(){
   });
 
   $('#resetCustomWordsBtn').addEventListener('click', () => {
+    const snapshot = [];
     let hadAny = false;
     for (let i = 1; i <= state.settings.wordCount; i++){
       const el = $(`#customWord${i}`);
-      if (el && el.value) hadAny = true;
-      if (el){ el.value = ''; el.classList.remove('filled'); }
+      const val = el ? el.value : '';
+      snapshot.push(val);
+      if (val) hadAny = true;
     }
-    onFilterChange();
-    if (hadAny) toast('Custom words cleared', 'info');
+    if (!hadAny) return;
+    confirmAction({
+      title: 'Clear custom words?',
+      message: 'This clears every locked word you\'ve typed into the Word slots above.',
+      confirmText: 'Clear',
+      onConfirm: () => {
+        for (let i = 1; i <= state.settings.wordCount; i++){
+          const el = $(`#customWord${i}`);
+          if (el){ el.value = ''; el.classList.remove('filled'); }
+        }
+        onFilterChange();
+        undoToast('Custom words cleared', () => {
+          for (let i = 1; i <= state.settings.wordCount; i++){
+            const el = $(`#customWord${i}`);
+            if (el && snapshot[i-1]){ el.value = snapshot[i-1]; el.classList.add('filled'); }
+          }
+          onFilterChange();
+        });
+      }
+    });
   });
 
   $('#countInput').addEventListener('input', (e) => setCount(parseInt(e.target.value,10)));
@@ -5240,20 +6403,45 @@ function wireEvents(){
   });
 
   $('#clearOutputBtn').addEventListener('click', () => {
-    if (state.output.length === 0) return;
-    state.output = [];
-    renderOutput();
-    toast('Output cleared', 'info');
+    const n = state.output.length;
+    if (n === 0) return;
+    confirmAction({
+      title: 'Clear output?',
+      message: `This removes all ${formatNumber(n)} generated username${n>1?'s':''} from this list. Anything already in History or Favorites is unaffected.`,
+      confirmText: 'Clear all',
+      onConfirm: () => {
+        const snapshot = state.output.slice();
+        state.output = [];
+        renderOutput();
+        undoToast('Output cleared', () => {
+          state.output = snapshot;
+          renderOutput();
+        });
+      }
+    });
   });
 
   $('#exportHistoryBtn').addEventListener('click', exportHistory);
   $('#clearHistoryBtn').addEventListener('click', () => {
-    if (state.history.length === 0) return;
-    state.history = [];
-    state.selectedHistory.clear();
-    renderHistory();
-    updateNavBadges();
-    toast('History cleared', 'info');
+    const n = state.history.length;
+    if (n === 0) return;
+    confirmAction({
+      title: 'Clear history?',
+      message: `This removes all ${formatNumber(n)} generated username${n>1?'s':''} from your session history. Favorites are unaffected.`,
+      confirmText: 'Clear all',
+      onConfirm: () => {
+        const snapshot = state.history.slice();
+        state.history = [];
+        state.selectedHistory.clear();
+        renderHistory();
+        updateNavBadges();
+        undoToast('History cleared', () => {
+          state.history = snapshot;
+          renderHistory();
+          updateNavBadges();
+        });
+      }
+    });
   });
   $('#historySelectAllBtn').addEventListener('click', () => {
     const visible = state.history.filter(h => matchesSearch(h.username, state.historySearch));
@@ -5267,16 +6455,35 @@ function wireEvents(){
   $('#historyBulkDeleteBtn').addEventListener('click', bulkDeleteHistory);
 
   $('#exportFavBtn').addEventListener('click', exportFavorites);
+  $('#favPwExportBtn').addEventListener('click', openPasswordExportModal);
+  $('#shareRecipeBtn').addEventListener('click', openSettingsShareModal);
+  $('#importRecipeBtn').addEventListener('click', () => openImportSettingsModal());
   $('#clearFavBtn').addEventListener('click', () => {
-    if (state.favorites.size === 0) return;
-    state.favorites.clear();
-    state.selectedFavorites.clear();
-    renderFavorites();
-    renderOutput();
-    renderHistory();
-    updateNavBadges();
-    updateStats();
-    toast('Favorites cleared', 'info');
+    const n = state.favorites.size;
+    if (n === 0) return;
+    confirmAction({
+      title: 'Clear favorites?',
+      message: `This removes all ${formatNumber(n)} saved favorite${n>1?'s':''}, including any notes, tags, and collections attached to them.`,
+      confirmText: 'Clear all',
+      onConfirm: () => {
+        const snapshot = new Map(state.favorites);
+        state.favorites.clear();
+        state.selectedFavorites.clear();
+        renderFavorites();
+        renderOutput();
+        renderHistory();
+        updateNavBadges();
+        updateStats();
+        undoToast('Favorites cleared', () => {
+          state.favorites = snapshot;
+          renderFavorites();
+          renderOutput();
+          renderHistory();
+          updateNavBadges();
+          updateStats();
+        });
+      }
+    });
   });
   $('#favSelectAllBtn').addEventListener('click', () => {
     const all = Array.from(state.favorites.values()).filter(h => matchesSearch(h.username, state.favSearch));
@@ -5551,6 +6758,8 @@ function init(){
   syncAutosaveUI();
   tickSession();
   wireEvents();
+  wireModalShell();
+  checkSharedSettingsLink();
   setInterval(tickSession, 1000);
   startAutosaveWatcher();
 }
