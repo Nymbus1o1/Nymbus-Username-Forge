@@ -590,6 +590,16 @@ input{font-family:inherit;}
 .domain-preset-btn:hover{background:var(--surface-glass-hover);color:var(--text-primary);border-color:var(--border-glass-strong);}
 .field-hint{font-size:11px;color:var(--text-muted);margin-top:6px;line-height:1.5;}
 
+/* ---------- ABOUT / CHANGELOG ---------- */
+.changelog-entry{margin-bottom:14px;}
+.changelog-entry:last-child{margin-bottom:0;}
+.changelog-version{
+  font-family:var(--font-mono);font-size:11.5px;font-weight:700;color:var(--text-secondary);
+  text-transform:uppercase;letter-spacing:.04em;margin-bottom:6px;
+}
+.changelog-notes{margin:0;padding-left:18px;font-size:12.5px;color:var(--text-secondary);line-height:1.65;}
+.changelog-notes li{margin-bottom:2px;}
+
 .btn{
   display:inline-flex;align-items:center;justify-content:center;gap:8px;
   border-radius:var(--radius-sm);border:1px solid transparent;cursor:pointer;
@@ -929,6 +939,21 @@ input{font-family:inherit;}
   *,*::before,*::after{animation-duration:0.001ms!important;animation-iteration-count:1!important;transition-duration:0.001ms!important;}
 }
 </style>
+<script>
+/* Applied synchronously, before first paint, so a system-light user doesn't
+   see a flash of the AMOLED-black default while the rest of the app boots
+   (which can take up to ~1.5s while it checks for on-device storage). This
+   is just the first guess: if auto-save restores an explicit saved theme
+   moments later, that takes over, and the manual toggle in Settings always
+   overrides both — see detectSystemTheme() / bootstrapAutosave() below. */
+(function(){
+  try{
+    if (window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches){
+      document.documentElement.setAttribute('data-theme', 'light');
+    }
+  }catch(err){}
+})();
+</script>
 </head>
 <body>
 
@@ -1817,6 +1842,13 @@ input{font-family:inherit;}
             </div>
           </div>
         </div>
+
+        <div class="settings-card glass">
+          <div class="settings-section-title">About</div>
+          <div class="settings-section-sub">Current version and recent changes</div>
+          <div class="chip" style="width:fit-content;"><span class="dot"></span>Nymbus <b id="aboutVersion">v19.1.0</b></div>
+          <div id="aboutChangelog" style="margin-top:16px;"></div>
+        </div>
       </section>
 
     </div>
@@ -2179,6 +2211,29 @@ const PLATFORM_PRESETS = {
   minecraft: { label:"Minecraft",   maxLength:16,   note:"16 characters, letters/numbers/underscore only", forceSeparator:"underscore", noHyphenDot:true }
 };
 const SEPARATOR_CHARS = { none:"", underscore:"_", hyphen:"-", dot:"." };
+
+/* ============================================================
+   VERSION / CHANGELOG — surfaced in Settings → About so returning
+   users have some way to tell releases apart. Newest entry first.
+   ============================================================ */
+const APP_VERSION = "19.1.0";
+const CHANGELOG = [
+  {
+    version: "19.1.0",
+    notes: [
+      "Theme now follows your system's light/dark setting the first time the app loads — the manual toggle above still overrides it any time.",
+      "Added this About panel so you can see the current version and what's changed."
+    ]
+  },
+  {
+    version: "19.0.0",
+    notes: [
+      "Full light and dark theming throughout the app.",
+      "Motion automatically reduces when your OS has \"reduce motion\" turned on."
+    ]
+  }
+];
+
 const DEFAULT_SETTINGS = {
   wordCount: 3,
   caseStyle: "title",
@@ -4994,6 +5049,18 @@ function setTheme(theme){
 function toggleTheme(){
   setTheme(state.settings.theme === 'light' ? 'dark' : 'light');
 }
+function renderAbout(){
+  const versionEl = $('#aboutVersion');
+  if (versionEl) versionEl.textContent = `v${APP_VERSION}`;
+  const list = $('#aboutChangelog');
+  if (!list) return;
+  list.innerHTML = CHANGELOG.map(entry => `
+    <div class="changelog-entry">
+      <div class="changelog-version">v${escapeHTML(entry.version)}</div>
+      <ul class="changelog-notes">${entry.notes.map(n => `<li>${escapeHTML(n)}</li>`).join('')}</ul>
+    </div>
+  `).join('');
+}
 function syncSettingsUI(){
   $$('.pill-btn[data-wordcount]').forEach(b => b.classList.toggle('active', parseInt(b.dataset.wordcount,10) === state.settings.wordCount));
   $$('.pill-btn[data-passphrasewordcount]').forEach(b => b.classList.toggle('active', parseInt(b.dataset.passphrasewordcount,10) === state.settings.passphraseWordCount));
@@ -5658,22 +5725,41 @@ function clearAutosaveData(){
   });
 }
 
+// Reads the OS/browser light-dark preference. Only used to pick a starting
+// theme before the user (or a restored session) has expressed one — the
+// manual toggle in Settings always wins after that, same as the early
+// pre-paint check in <head> above.
+function detectSystemTheme(){
+  try{
+    if (window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches) return 'light';
+  }catch(err){ /* matchMedia unavailable — fall through to the AMOLED default */ }
+  return 'dark';
+}
+
 // Runs once at startup, before the rest of init(): if auto-save was left on
-// last time, restore the saved snapshot before the UI first renders.
+// last time, restore the saved snapshot before the UI first renders. If that
+// snapshot didn't include an explicit theme (or there's no snapshot at all,
+// e.g. a genuine first visit), fall back to the system's light/dark
+// preference instead of always starting in AMOLED black.
 async function bootstrapAutosave(){
   await waitForArtifactStorage(1500);
   const flag = await storageGet(AUTOSAVE_FLAG_KEY);
   autosaveEnabled = flag === 'true';
-  if (!autosaveEnabled) return;
-  const saved = await storageGet(AUTOSAVE_DATA_KEY);
-  if (!saved) return;
-  try{
-    const data = JSON.parse(saved);
-    restoreSessionData(data);
-    autosaveLastSaved = new Date();
-  }catch(err){
-    // Corrupt/unreadable snapshot — ignore and continue with a clean state.
+  let themeRestored = false;
+  if (autosaveEnabled){
+    const saved = await storageGet(AUTOSAVE_DATA_KEY);
+    if (saved){
+      try{
+        const data = JSON.parse(saved);
+        restoreSessionData(data);
+        autosaveLastSaved = new Date();
+        themeRestored = !!(data.settings && data.settings.theme);
+      }catch(err){
+        // Corrupt/unreadable snapshot — ignore and continue with a clean state.
+      }
+    }
   }
+  if (!themeRestored) state.settings.theme = detectSystemTheme();
 }
 
 /* ============================================================
@@ -6742,6 +6828,7 @@ function init(){
   renderBlocklist();
   renderImportedCategories();
   renderSettingsProfiles();
+  renderAbout();
   syncSettingsUI();
   validateFilterState();
   updateGeneratorSub();
