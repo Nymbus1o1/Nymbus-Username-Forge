@@ -1,4 +1,5 @@
-# ⚡ Nymbus - Username Forge
+# ⚡ Nymbus 
+  ## Username Forge
 
 > A single-file, 100% offline generator for usernames, passphrases, and identities — no backend, no build step, no accounts, no tracking.
 
