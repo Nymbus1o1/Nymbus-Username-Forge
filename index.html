@@ -93,6 +93,28 @@
   --ambient-op-3:0.035;
 }
 
+/* "Dark" — soft dark-gray theme, distinct from the true-black AMOLED
+   default. AMOLED needs no block of its own: it's identical to the
+   base :root above (kept that way so a first-paint flash, before the
+   JS theme resolver runs, still lands on a plausible dark look). */
+:root[data-theme="dark"]{
+  --bg:#131316;
+  --bg-elevated:#1a1a1f;
+  --bg-elevated-2:#202027;
+  --bg-elevated-3:#28282f;
+  --surface-glass:rgba(255,255,255,0.055);
+  --surface-glass-hover:rgba(255,255,255,0.085);
+  --surface-glass-strong:rgba(255,255,255,0.11);
+  --border-glass:rgba(255,255,255,0.11);
+  --border-glass-strong:rgba(255,255,255,0.2);
+  --shadow-card:rgba(0,0,0,0.4);
+  --shadow-toast:rgba(0,0,0,0.5);
+  --shadow-drawer:rgba(0,0,0,0.55);
+  --ambient-op-1:0.14;
+  --ambient-op-2:0.075;
+  --ambient-op-3:0.06;
+}
+
 *,*::before,*::after{box-sizing:border-box;}
 html,body{height:100%;}
 body{
@@ -162,6 +184,15 @@ input{font-family:inherit;}
   gap:11px;
   padding:6px 8px 18px;
 }
+.fold-toggle{
+  margin-left:auto;flex:0 0 auto;
+  width:26px;height:26px;border-radius:8px;
+  display:flex;align-items:center;justify-content:center;
+  background:transparent;border:1px solid transparent;color:var(--text-muted);
+  cursor:pointer;transition:background .15s var(--ease),color .15s var(--ease);
+}
+.fold-toggle:hover{background:var(--surface-glass);color:var(--text-primary);}
+.fold-toggle svg{width:14px;height:14px;transition:transform .2s var(--ease);}
 .brand-mark{
   width:36px;height:36px;flex:0 0 36px;
   border-radius:11px;
@@ -274,6 +305,19 @@ input{font-family:inherit;}
 .db-stat-value{font-family:var(--font-mono);font-size:15px;font-weight:700;color:var(--accent-2);}
 .db-stat-label{font-size:10.5px;color:var(--text-muted);}
 .db-stat-sub{font-size:10.5px;color:var(--text-muted);line-height:1.5;}
+
+/* ---------- FOLDABLE SIDEBAR (desktop) ---------- */
+.app.sidebar-collapsed{grid-template-columns:72px 1fr;}
+.app.sidebar-collapsed .sidebar{padding:18px 10px 12px;}
+.app.sidebar-collapsed .brand{justify-content:center;padding:6px 0 18px;gap:0;}
+.app.sidebar-collapsed .brand-text{display:none;}
+.app.sidebar-collapsed .fold-toggle{margin-left:0;}
+.app.sidebar-collapsed .fold-toggle svg{transform:rotate(180deg);}
+.app.sidebar-collapsed .nav-tab{justify-content:center;padding:9px;gap:0;}
+.app.sidebar-collapsed .nav-tab .label,
+.app.sidebar-collapsed .nav-tab .badge{display:none;}
+.app.sidebar-collapsed .sidebar-scroll,
+.app.sidebar-collapsed .sidebar-footer{display:none;}
 
 /* ---------- MOBILE TOPBAR / OVERLAY ---------- */
 /* ---------- MOBILE SIDEBAR OVERLAY ---------- */
@@ -593,6 +637,12 @@ input{font-family:inherit;}
 /* ---------- ABOUT / CHANGELOG ---------- */
 .changelog-entry{margin-bottom:14px;}
 .changelog-entry:last-child{margin-bottom:0;}
+.about-built-by{
+  margin-top:16px;padding-top:14px;border-top:1px solid var(--border-glass);
+  font-size:11.5px;color:var(--text-muted);
+}
+.about-built-by a{color:var(--accent-2);font-weight:600;text-decoration:none;}
+.about-built-by a:hover{text-decoration:underline;}
 .changelog-version{
   font-family:var(--font-mono);font-size:11.5px;font-weight:700;color:var(--text-secondary);
   text-transform:uppercase;letter-spacing:.04em;margin-bottom:6px;
@@ -918,6 +968,16 @@ input{font-family:inherit;}
   .sidebar.open{transform:translateX(0);}
   .sidebar-overlay{display:block;}
   .menu-toggle{display:inline-flex;}
+  .fold-toggle{display:none;}
+  .app.sidebar-collapsed{grid-template-columns:1fr;}
+  .app.sidebar-collapsed .sidebar{padding:18px 14px 12px;}
+  .app.sidebar-collapsed .brand{justify-content:flex-start;padding:6px 8px 18px;gap:11px;}
+  .app.sidebar-collapsed .brand-text{display:block;}
+  .app.sidebar-collapsed .nav-tab{justify-content:flex-start;padding:9px 11px;gap:10px;}
+  .app.sidebar-collapsed .nav-tab .label,
+  .app.sidebar-collapsed .nav-tab .badge{display:inline;}
+  .app.sidebar-collapsed .sidebar-scroll,
+  .app.sidebar-collapsed .sidebar-footer{display:block;}
   .topbar{padding:14px 16px 10px;flex-wrap:wrap;}
   .topbar-chips{order:3;width:100%;overflow-x:auto;padding-bottom:2px;}
   .view-scroll{padding:6px 16px 90px;}
@@ -948,9 +1008,8 @@ input{font-family:inherit;}
    overrides both — see detectSystemTheme() / bootstrapAutosave() below. */
 (function(){
   try{
-    if (window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches){
-      document.documentElement.setAttribute('data-theme', 'light');
-    }
+    var light = window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches;
+    document.documentElement.setAttribute('data-theme', light ? 'light' : 'dark');
   }catch(err){}
 })();
 </script>
@@ -973,28 +1032,31 @@ input{font-family:inherit;}
         <div class="brand-name">Nymbus</div>
         <div class="brand-tag">Username Forge</div>
       </div>
+      <button class="fold-toggle" id="sidebarFoldToggle" title="Collapse sidebar" aria-label="Collapse sidebar" aria-expanded="true">
+        <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12.5 4.5 7 10l5.5 5.5"/></svg>
+      </button>
     </div>
 
     <nav class="nav-tabs" id="navTabs">
-      <button class="nav-tab active" data-view="generate">
+      <button class="nav-tab active" data-view="generate" title="Generate">
         <svg class="icon" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="6" height="6" rx="1.6"/><rect x="11" y="3" width="6" height="6" rx="1.6"/><rect x="3" y="11" width="6" height="6" rx="1.6"/><rect x="11" y="11" width="6" height="6" rx="1.6"/></svg>
         <span class="label">Generate</span>
       </button>
-      <button class="nav-tab" data-view="history">
+      <button class="nav-tab" data-view="history" title="History">
         <svg class="icon" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="10" cy="10" r="7.25"/><path d="M10 6v4l3 2"/></svg>
         <span class="label">History</span>
         <span class="badge" id="navHistoryBadge">0</span>
       </button>
-      <button class="nav-tab" data-view="favorites">
+      <button class="nav-tab" data-view="favorites" title="Favorites">
         <svg class="icon" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path class="fillable" d="M10 3.4l2.15 4.36 4.81.7-3.48 3.39.82 4.79L10 14.2l-4.3 2.26.82-4.79-3.48-3.4 4.81-.69L10 3.4z"/></svg>
         <span class="label">Favorites</span>
         <span class="badge" id="navFavBadge">0</span>
       </button>
-      <button class="nav-tab" data-view="stats">
+      <button class="nav-tab" data-view="stats" title="Statistics">
         <svg class="icon" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 16.5V10M10 16.5V4M16 16.5V8"/></svg>
         <span class="label">Statistics</span>
       </button>
-      <button class="nav-tab" data-view="settings">
+      <button class="nav-tab" data-view="settings" title="Settings">
         <svg class="icon" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h3M11 5h5M4 10h7M15 10h1M4 15h9M17 15h-1"/><circle cx="8.5" cy="5" r="1.7"/><circle cx="13" cy="10" r="1.7"/><circle cx="15" cy="15" r="1.7"/></svg>
         <span class="label">Settings</span>
       </button>
@@ -1041,7 +1103,7 @@ input{font-family:inherit;}
         <input type="text" class="search-input" id="globalSearch" placeholder="Search usernames…">
       </div>
       <div class="topbar-spacer"></div>
-      <button class="icon-btn" id="themeToggle" title="Switch to light" aria-label="Toggle theme">
+      <button class="icon-btn" id="themeToggle" title="Theme" aria-label="Toggle theme">
         <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="10" cy="10" r="3.4"/><path d="M10 2.5v2M10 15.5v2M17.5 10h-2M4.5 10h-2M15.3 4.7l-1.4 1.4M6.1 13.9l-1.4 1.4M15.3 15.3l-1.4-1.4M6.1 6.1 4.7 4.7"/></svg>
       </button>
       <div class="topbar-chips">
@@ -1466,10 +1528,12 @@ input{font-family:inherit;}
 
         <div class="settings-card glass">
           <div class="settings-section-title">Appearance</div>
-          <div class="settings-section-sub">Switch between the AMOLED black theme and light mode</div>
+          <div class="settings-section-sub">Auto follows your system setting. AMOLED uses true black for OLED screens; Dark is a softer dark gray.</div>
           <div class="pill-group">
-            <button class="pill-btn active" data-theme="dark">AMOLED black</button>
+            <button class="pill-btn active" data-theme="auto">Auto</button>
             <button class="pill-btn" data-theme="light">Light</button>
+            <button class="pill-btn" data-theme="dark">Dark</button>
+            <button class="pill-btn" data-theme="amoled">AMOLED black</button>
           </div>
         </div>
 
@@ -1845,9 +1909,12 @@ input{font-family:inherit;}
 
         <div class="settings-card glass">
           <div class="settings-section-title">About</div>
-          <div class="settings-section-sub">Current version and recent changes</div>
-          <div class="chip" style="width:fit-content;"><span class="dot"></span>Nymbus <b id="aboutVersion">v19.1.0</b></div>
+          <div class="settings-section-sub">Nymbus generates unique, offline, Title-Case usernames and passphrases from a local word database — no accounts, no network calls.</div>
+          <div class="chip" style="width:fit-content;"><span class="dot"></span>Nymbus <b id="aboutVersion">v19.2.0</b></div>
           <div id="aboutChangelog" style="margin-top:16px;"></div>
+          <div class="about-built-by">
+            Built by <a href="https://github.com/OneFileDev" target="_blank" rel="noopener noreferrer">OneFileDev</a>
+          </div>
         </div>
       </section>
 
@@ -2216,8 +2283,15 @@ const SEPARATOR_CHARS = { none:"", underscore:"_", hyphen:"-", dot:"." };
    VERSION / CHANGELOG — surfaced in Settings → About so returning
    users have some way to tell releases apart. Newest entry first.
    ============================================================ */
-const APP_VERSION = "19.1.0";
+const APP_VERSION = "19.2.0";
 const CHANGELOG = [
+  {
+    version: "19.2.0",
+    notes: [
+      "Migrated to OneFileDev UI standard: foldable sidebar, four-way theming (Auto/Light/Dark/AMOLED), and versioned About panel.",
+      "Sidebar can now collapse to an icon-only rail on desktop — toggle from the chevron next to the logo."
+    ]
+  },
   {
     version: "19.1.0",
     notes: [
@@ -2243,7 +2317,8 @@ const DEFAULT_SETTINGS = {
   maxLength: null,
   preset: "custom",
   exportFormat: "txt",
-  theme: "dark",
+  theme: "auto",
+  sidebarCollapsed: false,
   mode: "username",
   passphraseWordCount: 4,
   passphraseSeparator: "hyphen",
@@ -5037,17 +5112,31 @@ function setExportFormat(fmt){
 }
 const SUN_SVG = '<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="10" cy="10" r="3.4"/><path d="M10 2.5v2M10 15.5v2M17.5 10h-2M4.5 10h-2M15.3 4.7l-1.4 1.4M6.1 13.9l-1.4 1.4M15.3 15.3l-1.4-1.4M6.1 6.1 4.7 4.7"/></svg>';
 const MOON_SVG = '<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M16.7 12.4A7 7 0 1 1 7.6 3.3a5.6 5.6 0 0 0 9.1 9.1z"/></svg>';
-function setTheme(theme){
-  state.settings.theme = theme === 'light' ? 'light' : 'dark';
-  if (state.settings.theme === 'light') document.documentElement.setAttribute('data-theme', 'light');
-  else document.documentElement.removeAttribute('data-theme');
+const AMOLED_SVG = '<svg viewBox="0 0 20 20" fill="currentColor"><path d="M16.7 12.4A7 7 0 1 1 7.6 3.3a5.6 5.6 0 0 0 9.1 9.1z"/></svg>';
+const AUTO_SVG = '<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="4" width="15" height="10.5" rx="1.8"/><path d="M7 17.5h6M10 14.5v3"/><path d="M10 4v10.5" stroke-dasharray="1.6 1.6"/></svg>';
+const THEME_ICONS = { auto: AUTO_SVG, light: SUN_SVG, dark: MOON_SVG, amoled: AMOLED_SVG };
+const THEME_LABELS = { auto: 'Auto (system)', light: 'Light', dark: 'Dark', amoled: 'AMOLED black' };
+const THEME_CYCLE = ['auto', 'light', 'dark', 'amoled'];
+// Resolves a theme MODE (auto/light/dark/amoled) to the concrete value
+// applied to [data-theme] — 'auto' becomes whatever the OS currently
+// prefers (light or the soft-gray dark; AMOLED is manual-only).
+function resolveThemeMode(mode){
+  return mode === 'auto' ? detectSystemTheme() : mode;
+}
+function setTheme(mode){
+  state.settings.theme = THEME_CYCLE.includes(mode) ? mode : 'auto';
+  document.documentElement.setAttribute('data-theme', resolveThemeMode(state.settings.theme));
   const toggleBtn = $('#themeToggle');
-  if (toggleBtn) toggleBtn.innerHTML = state.settings.theme === 'light' ? MOON_SVG : SUN_SVG;
-  toggleBtn?.setAttribute('title', state.settings.theme === 'light' ? 'Switch to AMOLED black' : 'Switch to light');
+  if (toggleBtn){
+    toggleBtn.innerHTML = THEME_ICONS[state.settings.theme];
+    const next = THEME_CYCLE[(THEME_CYCLE.indexOf(state.settings.theme) + 1) % THEME_CYCLE.length];
+    toggleBtn.setAttribute('title', `Theme: ${THEME_LABELS[state.settings.theme]} (click for ${THEME_LABELS[next]})`);
+  }
   $$('.pill-btn[data-theme]').forEach(b => b.classList.toggle('active', b.dataset.theme === state.settings.theme));
 }
 function toggleTheme(){
-  setTheme(state.settings.theme === 'light' ? 'dark' : 'light');
+  const next = THEME_CYCLE[(THEME_CYCLE.indexOf(state.settings.theme) + 1) % THEME_CYCLE.length];
+  setTheme(next);
 }
 function renderAbout(){
   const versionEl = $('#aboutVersion');
@@ -5082,6 +5171,7 @@ function syncSettingsUI(){
   const presetObj = PLATFORM_PRESETS[state.settings.preset];
   $('#presetNote').textContent = presetObj ? presetObj.note : '';
   setTheme(state.settings.theme);
+  applySidebarFold();
   setMode(state.settings.mode);
   const weightedToggle = $('#weightedModeToggle');
   if (weightedToggle) weightedToggle.checked = state.weightedMode;
@@ -5725,22 +5815,22 @@ function clearAutosaveData(){
   });
 }
 
-// Reads the OS/browser light-dark preference. Only used to pick a starting
-// theme before the user (or a restored session) has expressed one — the
-// manual toggle in Settings always wins after that, same as the early
-// pre-paint check in <head> above.
+// Reads the OS/browser light-dark preference. Used both to resolve the
+// "Auto" theme mode live, and to pick a starting mode before the user (or
+// a restored session) has expressed one — same as the early pre-paint
+// check in <head> above. Auto never resolves to AMOLED; that's manual-only.
 function detectSystemTheme(){
   try{
     if (window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches) return 'light';
-  }catch(err){ /* matchMedia unavailable — fall through to the AMOLED default */ }
+  }catch(err){ /* matchMedia unavailable — fall through to the soft-dark default */ }
   return 'dark';
 }
 
 // Runs once at startup, before the rest of init(): if auto-save was left on
 // last time, restore the saved snapshot before the UI first renders. If that
 // snapshot didn't include an explicit theme (or there's no snapshot at all,
-// e.g. a genuine first visit), fall back to the system's light/dark
-// preference instead of always starting in AMOLED black.
+// e.g. a genuine first visit), fall back to Auto (system light/dark)
+// instead of a fixed default.
 async function bootstrapAutosave(){
   await waitForArtifactStorage(1500);
   const flag = await storageGet(AUTOSAVE_FLAG_KEY);
@@ -5759,7 +5849,7 @@ async function bootstrapAutosave(){
       }
     }
   }
-  if (!themeRestored) state.settings.theme = detectSystemTheme();
+  if (!themeRestored) state.settings.theme = 'auto';
 }
 
 /* ============================================================
@@ -6248,6 +6338,25 @@ function closeMobileSidebar(){
 }
 
 /* ============================================================
+   FOLDABLE SIDEBAR (desktop icon-only rail)
+   ============================================================ */
+function applySidebarFold(){
+  const app = $('.app');
+  const btn = $('#sidebarFoldToggle');
+  if (!app) return;
+  app.classList.toggle('sidebar-collapsed', !!state.settings.sidebarCollapsed);
+  if (btn){
+    btn.setAttribute('aria-expanded', state.settings.sidebarCollapsed ? 'false' : 'true');
+    btn.setAttribute('title', state.settings.sidebarCollapsed ? 'Expand sidebar' : 'Collapse sidebar');
+  }
+}
+function toggleSidebarFold(){
+  state.settings.sidebarCollapsed = !state.settings.sidebarCollapsed;
+  applySidebarFold();
+  scheduleAutosave();
+}
+
+/* ============================================================
    COUNT CONTROL
    ============================================================ */
 function setCount(n){
@@ -6400,6 +6509,12 @@ function wireEvents(){
   $('#menuToggle').addEventListener('click', openMobileSidebar);
   $('#sidebarOverlay').addEventListener('click', closeMobileSidebar);
   $('#themeToggle').addEventListener('click', toggleTheme);
+  $('#sidebarFoldToggle').addEventListener('click', toggleSidebarFold);
+  try{
+    window.matchMedia('(prefers-color-scheme: light)').addEventListener('change', () => {
+      if (state.settings.theme === 'auto') setTheme('auto');
+    });
+  }catch(err){ /* matchMedia change listener unsupported — Auto still resolves correctly on next load */ }
 
   $('#catSelectAll').addEventListener('click', () => {
     state.activeCategories = new Set(CATEGORIES);
