@@ -162,8 +162,7 @@ input{font-family:inherit;}
 .app{
   position:relative;
   z-index:1;
-  display:grid;
-  grid-template-columns:var(--sidebar-w) 1fr;
+  display:flex;
   height:100vh;
   height:100dvh;
 }
@@ -174,8 +173,14 @@ input{font-family:inherit;}
   border-right:1px solid var(--border-glass);
   display:flex;
   flex-direction:column;
+  flex:0 0 auto;
+  width:var(--sidebar-w);
   min-height:0;
+  min-width:0;
   padding:18px 14px 12px;
+  position:relative;
+  transition:width .22s var(--ease), padding .22s var(--ease);
+  will-change:width;
 }
 
 .brand{
@@ -185,14 +190,16 @@ input{font-family:inherit;}
   padding:6px 8px 18px;
 }
 .fold-toggle{
-  margin-left:auto;flex:0 0 auto;
-  width:26px;height:26px;border-radius:8px;
+  flex:0 0 auto;
+  width:24px;height:24px;border-radius:7px;
   display:flex;align-items:center;justify-content:center;
-  background:transparent;border:1px solid transparent;color:var(--text-muted);
-  cursor:pointer;transition:background .15s var(--ease),color .15s var(--ease);
+  background:var(--bg-elevated-2);border:1px solid var(--border-glass);color:var(--text-muted);
+  cursor:pointer;transition:background .15s var(--ease),color .15s var(--ease),border-color .15s var(--ease),box-shadow .15s var(--ease);
+  position:absolute;top:22px;right:-11px;z-index:2;
+  box-shadow:0 2px 8px var(--shadow-card);
 }
-.fold-toggle:hover{background:var(--surface-glass);color:var(--text-primary);}
-.fold-toggle svg{width:14px;height:14px;transition:transform .2s var(--ease);}
+.fold-toggle:hover{background:var(--surface-glass-hover);color:var(--text-primary);border-color:var(--border-glass-strong);}
+.fold-toggle svg{width:12px;height:12px;transition:transform .2s var(--ease);}
 .brand-mark{
   width:36px;height:36px;flex:0 0 36px;
   border-radius:11px;
@@ -201,13 +208,17 @@ input{font-family:inherit;}
   box-shadow:0 4px 18px rgba(124,92,255,0.45), inset 0 1px 0 rgba(255,255,255,0.25);
 }
 .brand-mark svg{width:19px;height:19px;color:#fff;}
-.brand-text{min-width:0;}
+.brand-text{
+  min-width:0;max-width:160px;opacity:1;overflow:hidden;
+  transition:max-width .2s var(--ease), opacity .14s var(--ease), margin .2s var(--ease);
+}
 .brand-name{
   font-size:15.5px;font-weight:700;letter-spacing:-0.01em;line-height:1.15;
   background:linear-gradient(90deg,var(--brand-grad-1),var(--brand-grad-2));
   -webkit-background-clip:text;background-clip:text;color:transparent;
+  white-space:nowrap;
 }
-.brand-tag{font-size:11px;color:var(--text-muted);margin-top:2px;letter-spacing:.02em;}
+.brand-tag{font-size:11px;color:var(--text-muted);margin-top:2px;letter-spacing:.02em;white-space:nowrap;}
 
 .nav-tabs{display:flex;flex-direction:column;gap:2px;padding:2px 2px 14px;}
 .nav-tab{
@@ -220,11 +231,12 @@ input{font-family:inherit;}
 }
 .nav-tab:hover{background:var(--surface-glass);color:var(--text-primary);}
 .nav-tab .icon{width:17px;height:17px;flex:0 0 17px;color:currentColor;opacity:.85;}
-.nav-tab .label{flex:1;min-width:0;}
+.nav-tab .label{flex:1;min-width:0;overflow:hidden;white-space:nowrap;opacity:1;transition:opacity .14s var(--ease);}
 .nav-tab .badge{
   font-family:var(--font-mono);font-size:10.5px;font-weight:600;
   color:var(--text-muted);background:var(--fill-subtle);
-  padding:1px 6px;border-radius:20px;
+  padding:1px 6px;border-radius:20px;flex:0 0 auto;
+  transition:opacity .14s var(--ease);
 }
 .nav-tab.active{
   background:var(--accent-soft);color:var(--text-on-accent-soft);border-color:rgba(124,92,255,0.28);
@@ -306,20 +318,49 @@ input{font-family:inherit;}
 .db-stat-label{font-size:10.5px;color:var(--text-muted);}
 .db-stat-sub{font-size:10.5px;color:var(--text-muted);line-height:1.5;}
 
-/* ---------- FOLDABLE SIDEBAR (desktop) ---------- */
-.app.sidebar-collapsed{grid-template-columns:72px 1fr;}
-.app.sidebar-collapsed .sidebar{padding:18px 10px 12px;}
-.app.sidebar-collapsed .brand{justify-content:center;padding:6px 0 18px;gap:0;}
-.app.sidebar-collapsed .brand-text{display:none;}
-.app.sidebar-collapsed .fold-toggle{margin-left:0;}
-.app.sidebar-collapsed .fold-toggle svg{transform:rotate(180deg);}
-.app.sidebar-collapsed .nav-tab{justify-content:center;padding:9px;gap:0;}
-.app.sidebar-collapsed .nav-tab .label,
-.app.sidebar-collapsed .nav-tab .badge{display:none;}
-.app.sidebar-collapsed .sidebar-scroll,
-.app.sidebar-collapsed .sidebar-footer{display:none;}
+/* ---------- FOLDABLE SIDEBAR ----------
+   Collapse behavior is desktop-only: below the 820px breakpoint the
+   sidebar is already an off-canvas drawer (see mobile block below), so
+   the fold control is hidden there and .collapsed is inert — a state
+   carried over from a wider viewport must never shrink the mobile
+   drawer down to an icon rail. */
+@media (min-width:821px){
+  .sidebar.collapsed{width:72px;padding:18px 12px 12px;}
+  .sidebar.collapsed .fold-toggle svg{transform:rotate(180deg);}
+  .sidebar.collapsed .brand-text{max-width:0;opacity:0;margin-left:-11px;}
 
-/* ---------- MOBILE TOPBAR / OVERLAY ---------- */
+  .sidebar.collapsed .nav-tab{justify-content:center;gap:0;padding:9px 0;}
+  .sidebar.collapsed .nav-tab .label{width:0;opacity:0;flex:0 0 0;}
+  .sidebar.collapsed .nav-tab .badge{
+    position:absolute;top:6px;right:15px;
+    width:7px;height:7px;min-width:0;padding:0;
+    border-radius:50%;font-size:0;color:transparent;
+    background:var(--accent);opacity:1;box-shadow:0 0 0 2px var(--bg-elevated);
+  }
+  .sidebar.collapsed .nav-tab .badge.is-zero{opacity:0;}
+  .sidebar.collapsed .nav-tab::after{
+    content:attr(title);
+    position:absolute;left:calc(100% + 12px);top:50%;
+    transform:translate(-6px,-50%);
+    background:var(--bg-elevated-3);color:var(--text-primary);
+    font-size:12px;font-weight:600;white-space:nowrap;
+    padding:6px 11px;border-radius:var(--radius-xs);
+    border:1px solid var(--border-glass-strong);
+    box-shadow:0 10px 28px var(--shadow-card);
+    opacity:0;pointer-events:none;
+    transition:opacity .12s var(--ease), transform .12s var(--ease);
+    z-index:60;
+  }
+  .sidebar.collapsed .nav-tab:hover::after,
+  .sidebar.collapsed .nav-tab:focus-visible::after{
+    opacity:1;transform:translate(0,-50%);
+  }
+
+  .sidebar-scroll,.sidebar-footer{transition:opacity .16s var(--ease);}
+  .sidebar.collapsed .sidebar-scroll,
+  .sidebar.collapsed .sidebar-footer{opacity:0;pointer-events:none;height:0;flex:0 0 0;overflow:hidden;padding:0;margin:0;border:0;}
+}
+
 /* ---------- MOBILE SIDEBAR OVERLAY ---------- */
 .sidebar-overlay{
   display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);
@@ -330,6 +371,7 @@ input{font-family:inherit;}
 
 /* ---------- MAIN ---------- */
 .main{
+  flex:1 1 0%;
   min-width:0;min-height:0;
   display:flex;flex-direction:column;
   height:100%;
@@ -959,7 +1001,6 @@ input{font-family:inherit;}
 }
 
 @media (max-width:820px){
-  .app{grid-template-columns:1fr;}
   .sidebar{
     position:fixed;top:0;left:0;bottom:0;width:280px;z-index:50;
     transform:translateX(-100%);transition:transform .26s var(--ease);
@@ -969,15 +1010,6 @@ input{font-family:inherit;}
   .sidebar-overlay{display:block;}
   .menu-toggle{display:inline-flex;}
   .fold-toggle{display:none;}
-  .app.sidebar-collapsed{grid-template-columns:1fr;}
-  .app.sidebar-collapsed .sidebar{padding:18px 14px 12px;}
-  .app.sidebar-collapsed .brand{justify-content:flex-start;padding:6px 8px 18px;gap:11px;}
-  .app.sidebar-collapsed .brand-text{display:block;}
-  .app.sidebar-collapsed .nav-tab{justify-content:flex-start;padding:9px 11px;gap:10px;}
-  .app.sidebar-collapsed .nav-tab .label,
-  .app.sidebar-collapsed .nav-tab .badge{display:inline;}
-  .app.sidebar-collapsed .sidebar-scroll,
-  .app.sidebar-collapsed .sidebar-footer{display:block;}
   .topbar{padding:14px 16px 10px;flex-wrap:wrap;}
   .topbar-chips{order:3;width:100%;overflow-x:auto;padding-bottom:2px;}
   .view-scroll{padding:6px 16px 90px;}
@@ -1826,7 +1858,7 @@ input{font-family:inherit;}
 
         <div class="settings-card glass">
           <div class="settings-section-title">Auto-save in this browser</div>
-          <div class="settings-section-sub">Optional — remembers your history, favorites, blocklist and settings on this device between visits. Off by default, and off means nothing is stored anywhere.</div>
+          <div class="settings-section-sub">Optional — remembers everything: history, favorites (including any saved passwords), your email address, blocklist, custom categories and all settings, on this device between visits. Off by default, and off means nothing is stored anywhere.</div>
           <label class="checkbox-row">
             <input type="checkbox" id="autosaveToggle">
             <span>Automatically save as I go</span>
@@ -1910,7 +1942,7 @@ input{font-family:inherit;}
         <div class="settings-card glass">
           <div class="settings-section-title">About</div>
           <div class="settings-section-sub">Nymbus generates unique, offline, Title-Case usernames and passphrases from a local word database — no accounts, no network calls.</div>
-          <div class="chip" style="width:fit-content;"><span class="dot"></span>Nymbus <b id="aboutVersion">v19.2.0</b></div>
+          <div class="chip" style="width:fit-content;"><span class="dot"></span>Nymbus <b id="aboutVersion">v19.2.1</b></div>
           <div id="aboutChangelog" style="margin-top:16px;"></div>
           <div class="about-built-by">
             Built by <a href="https://github.com/OneFileDev" target="_blank" rel="noopener noreferrer">OneFileDev</a>
@@ -2283,8 +2315,15 @@ const SEPARATOR_CHARS = { none:"", underscore:"_", hyphen:"-", dot:"." };
    VERSION / CHANGELOG — surfaced in Settings → About so returning
    users have some way to tell releases apart. Newest entry first.
    ============================================================ */
-const APP_VERSION = "19.2.0";
+const APP_VERSION = "19.2.1";
 const CHANGELOG = [
+  {
+    version: "19.2.1",
+    notes: [
+      "Auto-save now actually saves everything: your email address and any passwords stored on favorites are included, matching what \"Automatically save as I go\" has always said it does.",
+      "Sidebar collapse got a visual pass — smoother width animation, a floating hover label for icon-only tabs, and unread counts shown as a small dot instead of disappearing."
+    ]
+  },
   {
     version: "19.2.0",
     notes: [
@@ -2297,13 +2336,6 @@ const CHANGELOG = [
     notes: [
       "Theme now follows your system's light/dark setting the first time the app loads — the manual toggle above still overrides it any time.",
       "Added this About panel so you can see the current version and what's changed."
-    ]
-  },
-  {
-    version: "19.0.0",
-    notes: [
-      "Full light and dark theming throughout the app.",
-      "Motion automatically reduces when your OS has \"reduce motion\" turned on."
     ]
   }
 ];
@@ -4638,8 +4670,12 @@ function renderBreakdown(){
 }
 
 function updateNavBadges(){
-  $('#navHistoryBadge').textContent = formatNumber(state.history.length);
-  $('#navFavBadge').textContent = formatNumber(state.favorites.size);
+  const hist = $('#navHistoryBadge');
+  const fav = $('#navFavBadge');
+  hist.textContent = formatNumber(state.history.length);
+  hist.classList.toggle('is-zero', state.history.length === 0);
+  fav.textContent = formatNumber(state.favorites.size);
+  fav.classList.toggle('is-zero', state.favorites.size === 0);
 }
 
 function tickSession(){
@@ -5740,7 +5776,7 @@ function syncAutosaveUI(){
 
 async function doAutosave(){
   if (!autosaveEnabled) return;
-  const ok = await storageSet(AUTOSAVE_DATA_KEY, serializeSession(false));
+  const ok = await storageSet(AUTOSAVE_DATA_KEY, serializeSession(true));
   if (ok){
     autosaveLastSaved = new Date();
     syncAutosaveUI();
@@ -5759,7 +5795,7 @@ function startAutosaveWatcher(){
   let lastSnapshot = null;
   setInterval(() => {
     if (!autosaveEnabled) return;
-    const snapshot = serializeSession(false);
+    const snapshot = serializeSession(true);
     if (snapshot !== lastSnapshot){
       lastSnapshot = snapshot;
       scheduleAutosave();
@@ -6341,10 +6377,10 @@ function closeMobileSidebar(){
    FOLDABLE SIDEBAR (desktop icon-only rail)
    ============================================================ */
 function applySidebarFold(){
-  const app = $('.app');
+  const sidebar = $('#sidebar');
   const btn = $('#sidebarFoldToggle');
-  if (!app) return;
-  app.classList.toggle('sidebar-collapsed', !!state.settings.sidebarCollapsed);
+  if (!sidebar) return;
+  sidebar.classList.toggle('collapsed', !!state.settings.sidebarCollapsed);
   if (btn){
     btn.setAttribute('aria-expanded', state.settings.sidebarCollapsed ? 'false' : 'true');
     btn.setAttribute('title', state.settings.sidebarCollapsed ? 'Expand sidebar' : 'Collapse sidebar');
